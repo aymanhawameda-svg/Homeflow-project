@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>HomeFlow — Shopping List</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- DaisyUI -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <script src="newstyle.js" defer></script>
+  </head>
+
+  <body class="min-h-screen p-4 sm:p-8 flex items-center justify-center">
+    <main class="w-full max-w-3xl">
+      <section class="shopping-card card bg-base-100 rounded-3xl">
+        <div class="card-body p-5 sm:p-8 gap-6">
+          <header class="flex flex-col gap-5">
+            <div class="flex items-center justify-between gap-3">
+            
+              <div class="flex items-center gap-4">
+                <button
+                  type="button"
+                  class="text-slate-700 hover:text-emerald-700 text-3xl font-bold transition-colors"
+                  aria-label="Go back"
+                >
+                  ←
+                </button>
+
+                <div>
+                  <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">
+                    Shopping
+                  </h1>
+
+                  <p id="item-count" class="text-sm text-slate-500 mt-1">
+                    8 items left to buy
+                  </p>
+                </div>
+              </div>
+
+              <!-- Right: Add button -->
+              <button
+                id="open-add"
+                type="button"
+                class="btn btn-home rounded-xl px-4 shrink-0"
+              >
+                <span aria-hidden="true">＋</span>
+                Hinzufügen
+              </button>
+            <!-- Image below -->
+<div class="w-full h-60 md:h-48 rounded-2xl overflow-hidden flex items-center justify-center">
+  <img
+    src="bowl.png"
+    alt="Bowl"
+    class="w-full h-full object-contain"
+  />
+</div>
+          </header>
+
+          <!-- Add form -->
+          <form
+            id="add-form"
+            class="hidden grid grid-cols-1 sm:grid-cols-[1fr_110px_auto] gap-2"
+          >
+            <input
+              id="item-name"
+              type="text"
+              class="input input-bordered w-full rounded-xl"
+              placeholder="Product name"
+              required
+              maxlength="100"
+            />
+
+            <input
+              id="item-quantity"
+              type="text"
+              class="input input-bordered w-full rounded-xl"
+              placeholder="Quantity"
+              maxlength="40"
+            />
+
+            <select
+              id="item-category"
+              class="select select-bordered w-full rounded-xl"
+            >
+              <option value="groceries">Groceries 🛒</option>
+              <option value="household">Household 🏠</option>
+              <option value="personal-care">Personal Care 🧴</option>
+            </select>
+
+            <button
+              type="submit"
+              class="btn btn-home w-[150px] px-1 rounded-xl flex justify-center justify-self-center"
+            >
+              Add
+            </button>
+          </form>
+
+          <!-- Category filters -->
+          <nav class="flex flex-wrap gap-2" aria-label="Shopping categories">
+            <button
+              type="button"
+              class="filter-btn all-btn"
+              data-filter="all"
+              aria-pressed="true"
+            >
+              All
+            </button>
+
+            <button
+              type="button"
+              class="filter-btn groceries-btn"
+              data-filter="groceries"
+              aria-pressed="false"
+            >
+              Groceries 🛒
+            </button>
+
+            <button
+              type="button"
+              class="filter-btn household-btn"
+              data-filter="household"
+              aria-pressed="false"
+            >
+              Household 🏠
+            </button>
+
+            <button
+              type="button"
+              class="filter-btn care-btn"
+              data-filter="personal-care"
+              aria-pressed="false"
+            >
+              Personal Care 🧴
+            </button>
+          </nav>
+
+          <!-- List heading -->
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold">Your shopping list</h2>
+            <span class="badge badge-success badge-outline"> This week </span>
+          </div>
+
+          <!-- Shopping list -->
+
+          <ul id="shopping-items" class="flex flex-col gap-3"></ul>
+
+          <!-- Empty state -->
+          <div id="empty-message" class="hidden text-center py-8">
+            <div class="text-4xl mb-3" aria-hidden="true">🛒</div>
+            <p class="font-semibold">Your list is empty</p>
+            <p class="text-sm text-slate-500 mt-1">
+              Add your first shopping item.
+            </p>
+          </div>
+
+          <!-- Progress -->
+          <footer class="border-t border-slate-100 pt-5">
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-sm text-slate-500"> Shopping progress </span>
+              <span id="progress-label" class="text-sm font-bold"> 0% </span>
+            </div>
+
+            <div
+              class="progress-track"
+              role="progressbar"
+              aria-label="Shopping progress"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+              id="progress-track"
+            >
+              <div
+                id="progress-fill"
+                class="progress-fill"
+                style="width: 0%"
+              ></div>
+            </div>
+
+            <p id="progress-summary" class="text-xs text-slate-400 mt-3">
+              0 of 8 items completed
+            </p>
+          </footer>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

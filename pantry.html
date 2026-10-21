@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>HomeFlow — Shopping List</title>
+
+    <!-- Сначала DaisyUI и Tailwind -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script type="module" src="https://unpkg.com/cally"></script>
+
+    <!-- Стили HomeFlow -->
+    <link rel="stylesheet" href="pantry.css" />
+
+    <script src="pantry.js" defer></script>
+  </head>
+
+  <body>
+    <main class="pantry">
+      <section class="shopping-card card bg-base-100 rounded-3xl">
+        <div class="card-body p-5 sm:p-8 gap-6">
+          <!-- Header -->
+          <header class="w-full">
+            <div class="shopping-header-row">
+              <!-- Левая часть -->
+              <div class="flex items-center gap-30 min-w-0">
+                <button
+                  type="button"
+                  class="text-slate-700 hover:text-emerald-700 text-3xl font-bold transition-colors shrink-0"
+                  aria-label="Go back"
+                >
+                  ←
+                </button>
+
+                <div>
+                  <h1 class="text-2xl sm:text-3xl font-bold">Vorrat</h1>
+                </div>
+              </div>
+
+              <!-- Правая часть -->
+
+              <button
+                id="open-add"
+                type="button"
+                class="btn btn-home rounded-xl px-4 shrink-0"
+              >
+                <span aria-hidden="true">＋</span>
+                Hinzufügen
+              </button>
+
+              <div class="flex gap-4">
+                <span class="badge badge-success">✓ Alles gut</span>
+                <span class="badge badge-warning">◷ Bald fällig</span>
+                <span class="badge badge-error">⚠ Dringend</span>
+              </div>
+            </div>
+
+            <form
+              id="produktForm"
+              class="hidden grid grid-cols-1 sm:grid-cols-[1fr_110px_auto] gap-2 w-full max-w-lg mx-auto"
+            >
+              <input
+                type="text"
+                id="produktName"
+                class="input input-bordered w-full rounded-xl"
+                placeholder="Titel einfügen"
+                required
+                maxlength="100"
+              />
+
+              <input
+                type="text"
+                id="produktMenge"
+                class="input input-bordered w-full rounded-xl"
+                placeholder="Menge"
+                maxlength="40"
+              />
+
+              <select
+                id="produktKategorie"
+                class="select select-bordered w-full rounded-xl"
+                required
+              >
+                <option disabled selected value="">Kategorie</option>
+                <option value="Kühlschrank">Kühlschrank</option>
+                <option value="Gefrierfach">Gefrierfach</option>
+                <option value="Vorrat">Vorrat</option>
+              </select>
+
+              <!-- Kalender -->
+              <div class="w-full sm:col-span-3">
+                <button
+                  type="button"
+                  id="cally1"
+                  popovertarget="cally-popover1"
+                  class="input input-bordered w-full rounded-xl text-left"
+                  style="anchor-name: --cally1"
+                >
+                  Ablaufdatum
+                </button>
+
+                <input type="hidden" id="produktDatum" />
+
+                <div
+                  popover
+                  id="cally-popover1"
+                  class="dropdown bg-base-100 rounded-box shadow-lg"
+                  style="position-anchor: --cally1"
+                >
+                  <calendar-date
+                    id="calendar"
+                    class="cally bg-base-100 border border-base-300 shadow-lg rounded-box"
+                  >
+                    <svg
+                      aria-label="Previous"
+                      class="fill-current size-4"
+                      slot="previous"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M15.75 19.5 8.25 12l7.5-7.5"
+                      ></path>
+                    </svg>
+
+                    <svg
+                      aria-label="Next"
+                      class="fill-current size-4"
+                      slot="next"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                      ></path>
+                    </svg>
+
+                    <calendar-month></calendar-month>
+                  </calendar-date>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                id="produktHinzufuegen"
+                class="btn btn-home w-[150px] px-1 rounded-xl justify-self-center sm:col-span-3"
+              >
+                Hinzufügen
+              </button>
+            </form>
+          </header>
+
+          <!-- Фильтры -->
+          <nav class="pantry-filters">
+            <button class="filter-btn active">Alle</button>
+            <button class="filter-btn">Kühlschrank</button>
+            <button class="filter-btn">Gefrierfach</button>
+            <button class="filter-btn">Vorrat</button>
+          </nav>
+
+          <!-- Сетка продуктов -->
+          <section
+            id="produkteContainer"
+            class="grid grid-cols-2 gap-4 sm:grid-cols-3"
+          ></section>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
