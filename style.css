@@ -33,7 +33,7 @@ body {
     var(--home-bg);
 }
 
-/* Общая ширина: 240px меню + 896px содержимое */
+
 .layout {
   width: 100%;
   min-height: 100vh;
@@ -45,7 +45,7 @@ body {
   padding: 0;
 }
 
-/* Общая кнопка */
+
 .btn-home {
   display: inline-flex;
   align-items: center;

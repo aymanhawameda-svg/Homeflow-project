@@ -30,7 +30,6 @@ body {
     var(--home-bg);
 }
 
-/* الكروت والتصميم الأساسي */
 .my-card {
   color: var(--home-text);
   background: var(--home-surface);
@@ -61,7 +60,6 @@ body {
   line-height: 1.6;
 }
 
-/* الأزرار المخصصة */
 .btn-custom {
   padding: 10px 16px;
   color: #092116;

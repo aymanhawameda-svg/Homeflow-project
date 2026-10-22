@@ -3,8 +3,7 @@ const FIXCOSTS_KEY = "homeflow_fixcosts";
 const MEMBERS_KEY = "homeflow_members";
 const MONTHLY_LIMIT = 2500.0;
 
-let currentFilterType = "all"; // 'all', 'fix', 'variable'
-
+let currentFilterType = "all";
 function getExpenses() {
   const data = localStorage.getItem(EXPENSES_KEY);
   return data ? JSON.parse(data) : [];
@@ -28,7 +27,6 @@ function getMembers() {
   return members ? JSON.parse(members) : ["Alex", "Sadeen", "Ayman"];
 }
 
-// تعبئة القوائم المنسدلة بالأعضاء
 function populateMemberSelects() {
   const members = getMembers();
   const fixSelect = document.getElementById("fixcost-assignee-select");
@@ -60,7 +58,6 @@ function openAddExpenseModal() {
   expense_modal.showModal();
 }
 
-// إضافة مصروف متغير
 document
   .getElementById("add-expense-form")
   .addEventListener("submit", function (e) {
@@ -83,7 +80,6 @@ document
     renderBudgetPage();
   });
 
-// إضافة تكلفة ثابتة
 document
   .getElementById("add-fixcost-form")
   .addEventListener("submit", function (e) {
@@ -137,7 +133,6 @@ function setFilterType(type) {
   renderBudgetPage();
 }
 
-// رسم المخطط البياني للأشهر
 function renderMonthlyComparison() {
   const expenses = getExpenses();
   const fixcosts = getFixCosts();
@@ -212,7 +207,6 @@ function renderMonthlyComparison() {
   }
 }
 
-// عرض الصفحة بالكامل
 function renderBudgetPage() {
   const expenses = getExpenses();
   const fixcosts = getFixCosts();
@@ -231,7 +225,6 @@ function renderBudgetPage() {
   let totalFix = 0;
   let totalVariable = 0;
 
-  // 1. تصفية وعرض التكاليف الثابتة
   fixcosts.forEach((fix) => {
     if (selectedPerson !== "all" && fix.assignee !== selectedPerson) return;
     if (selectedCategory !== "all" && fix.category !== selectedCategory) return;
@@ -263,7 +256,6 @@ function renderBudgetPage() {
     }
   });
 
-  // 2. تصفية وعرض المصاريف المتغيرة
   expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
   expenses.forEach((exp) => {
     if (selectedPerson !== "all" && exp.assignee !== selectedPerson) return;

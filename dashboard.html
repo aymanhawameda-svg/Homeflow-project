@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="de" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>HomeFlow — Dashboard</title>
+    <title>HomeFlow — Übersicht</title>
 
     <link
       href="https://cdn.jsdelivr.net/npm/daisyui@5"
@@ -15,6 +15,7 @@
 
     <link rel="stylesheet" href="./dashboard.css" />
     <script src="./dashboard.js" defer></script>
+    <script src="./main.js" defer></script>
   </head>
 
   <body>
@@ -56,14 +57,13 @@
     <div class="min-h-screen lg:grid lg:grid-cols-[240px_1fr]">
       <!-- Sidebar -->
       <aside class="sidebar p-5 lg:p-6">
-        <a href="#overview" class="flex items-center gap-3 px-2">
+        <a href="./dashboard.html" class="flex items-center gap-3 px-2">
           <span class="icon logo-icon">
             <svg><use href="#home" /></svg>
           </span>
 
           <div>
             <div class="text-xl font-bold tracking-tight">Zuhause</div>
-
             <div class="muted text-xs">Ein bisschen weniger Alltagstrubel.</div>
           </div>
         </a>
@@ -74,31 +74,29 @@
           class="mt-4 flex gap-2 overflow-x-auto lg:flex-col"
           aria-label="Main navigation"
         >
-          <a href="#overview" class="nav-item active">
+          <a href="./dashboard.html" class="nav-item active">
             <span class="icon">
               <svg><use href="#home" /></svg>
             </span>
             Übersicht
           </a>
 
-          <a href="tasks.html" class="nav-item">
+          <a href="./tasks.html" class="nav-item">
             <span class="icon">
               <svg><use href="#check" /></svg>
             </span>
-
             Aufgaben
-
-            <span id="nav-count" class="badge badge-sm nav-count ml-auto">
-              3
-            </span>
+            <span id="nav-count" class="badge badge-sm nav-count ml-auto"
+              >0</span
+            >
           </a>
 
           <a href="./newstyle.html" class="nav-item whitespace-nowrap">
-  <span class="icon">
-    <svg><use href="#cart" /></svg>
-  </span>
-  Einkaufsliste
-</a>
+            <span class="icon">
+              <svg><use href="#cart" /></svg>
+            </span>
+            Einkaufsliste
+          </a>
 
           <a href="./pantry.html" class="nav-item">
             <span class="icon">
@@ -107,7 +105,7 @@
             Vorräte
           </a>
 
-          <a href="budget.html" class="nav-item">
+          <a href="./budget.html" class="nav-item">
             <span class="icon">
               <svg><use href="#wallet" /></svg>
             </span>
@@ -124,10 +122,8 @@
 
         <div id="household" class="mt-8 hidden items-center gap-3 px-2 lg:flex">
           <div class="profile-avatar">A</div>
-
           <div>
             <p class="text-sm font-medium">Ayman Altman</p>
-            
           </div>
         </div>
       </aside>
@@ -148,9 +144,7 @@
               <span class="ml-1 text-2xl" aria-hidden="true">☀️</span>
             </h1>
 
-            <p class="muted mt-2 text-sm">
-              Dein Zuhause auf einen Blick.
-            </p>
+            <p class="muted mt-2 text-sm">Dein Zuhause auf einen Blick.</p>
           </div>
 
           <!-- Decorative element -->
@@ -180,10 +174,9 @@
               </h2>
 
               <p class="hero-copy mt-4 max-w-[240px] text-sm leading-6">
-                Aufgaben, Einkäufe und all die kleinen Dinge — alles an einem Ort.
+                Aufgaben, Einkäufe und all die kleinen Dinge — alles an einem
+                Ort.
               </p>
-
-              
             </div>
 
             <div
@@ -202,28 +195,26 @@
               </div>
 
               <div class="cup"></div>
-
-              
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
-            <a href="#tasks" class="panel stat-card p-5">
+            <a href="./tasks.html" class="panel stat-card p-5">
               <span class="icon stat-icon green">
                 <svg><use href="#check" /></svg>
               </span>
 
-              <p class="muted mt-4 text-xs">Tasks to do</p>
+              <p class="muted mt-4 text-xs">Offene Aufgaben</p>
 
               <div class="mt-1 flex items-end justify-between gap-2">
                 <span
                   id="open-count"
                   class="text-3xl font-semibold tracking-tight"
                 >
-                  3
+                  0
                 </span>
 
-                <span class="stat-caption text-mint"> You’ve got this </span>
+                <span class="stat-caption text-mint"> Das schaffst du </span>
               </div>
             </a>
 
@@ -236,42 +227,44 @@
                 <svg><use href="#cart" /></svg>
               </span>
 
-              <p class="muted mt-4 text-xs">Shopping list</p>
+              <p class="muted mt-4 text-xs">Einkaufsliste</p>
 
               <div class="mt-1 flex items-end justify-between gap-2">
                 <span class="text-3xl font-semibold tracking-tight"> 8 </span>
 
-                <span class="stat-caption text-purple"> 3 essentials </span>
+                <span class="stat-caption text-purple"> 3 Wichtig </span>
               </div>
             </a>
 
-            <div id="budget" class="panel p-5">
+            <a
+              href="./budget.html"
+              id="budget"
+              class="panel stat-card p-5 block"
+            >
               <span class="icon stat-icon gold">
                 <svg><use href="#wallet" /></svg>
               </span>
 
-              <p class="muted mt-4 text-xs">Spent this month</p>
+              <p class="muted mt-4 text-xs">Diesen Monat ausgegeben</p>
 
               <div class="mt-1 flex items-end justify-between gap-2">
-                <span class="text-3xl font-semibold tracking-tight">
-                  €432
-                </span>
+                <span class="text-3xl font-semibold tracking-tight"> €0 </span>
 
-                <span class="stat-caption text-mint"> ↓ 12% </span>
+                <span class="stat-caption text-mint"> Budget </span>
               </div>
-            </div>
+            </a>
 
-            <a href="#pantry" class="panel stat-card p-5">
+            <a href="./pantry.html" class="panel stat-card p-5">
               <span class="icon stat-icon olive">
                 <svg><use href="#leaf" /></svg>
               </span>
 
-              <p class="muted mt-4 text-xs">In your pantry</p>
+              <p class="muted mt-4 text-xs">In Vorratskammer</p>
 
               <div class="mt-1 flex items-end justify-between gap-2">
                 <span class="text-3xl font-semibold tracking-tight"> 12 </span>
 
-                <span class="stat-caption text-gold"> 3 to use soon </span>
+                <span class="stat-caption text-gold"> Bald verbrauchen </span>
               </div>
             </a>
           </div>
@@ -284,11 +277,11 @@
             <div class="flex items-center justify-between gap-3">
               <div>
                 <h2 class="text-lg font-semibold tracking-tight">
-                  A little to-do
+                  Kleine Aufgaben
                 </h2>
 
                 <p class="muted mt-1 text-xs">
-                  Share the load. Make room for the good stuff.
+                  Teile die Last. Mach Platz für die schönen Dinge.
                 </p>
               </div>
 
@@ -297,7 +290,7 @@
                 class="btn btn-ghost btn-sm text-mint"
                 data-open-dialog="task-modal"
               >
-                + Add
+                + Hinzufügen
               </button>
             </div>
 
@@ -312,7 +305,7 @@
                 data-filter="all"
                 aria-pressed="true"
               >
-                All tasks
+                Alle Aufgaben
               </button>
 
               <button
@@ -321,7 +314,7 @@
                 data-filter="open"
                 aria-pressed="false"
               >
-                To do
+                Offen
               </button>
 
               <button
@@ -330,14 +323,14 @@
                 data-filter="done"
                 aria-pressed="false"
               >
-                Completed
+                Erledigt
               </button>
             </div>
 
             <div id="task-list" class="mt-4"></div>
 
             <p id="empty-tasks" class="muted hidden py-8 text-center text-sm">
-              Nothing here. Enjoy a little breathing room.
+              Nichts zu tun. Genieße die freie Zeit.
             </p>
 
             <div class="mt-auto pt-4">
@@ -345,49 +338,46 @@
                 class="task-message flex items-center gap-2 rounded-xl px-4 py-3"
               >
                 <span class="text-sm" aria-hidden="true">✨</span>
-                <p class="text-xs">A little progress is still progress.</p>
+                <p class="text-xs">Jeder kleine Schritt bringt dich voran.</p>
               </div>
             </div>
           </div>
 
           <!-- Pantry -->
           <div id="pantry" class="panel shopping-card card">
-  <div class="card-body">
-    <header>
-      <div class="shopping-header-row">
-        <div>
-          <h2 class="text-lg font-semibold">
-            Vorräte
-          </h2>
-        </div>
+            <div class="card-body">
+              <header>
+                <div class="shopping-header-row">
+                  <div>
+                    <h2 class="text-lg font-semibold">Vorräte</h2>
+                  </div>
 
-        <a
-          href="./pantry.html"
-          class="text-sm font-medium"
-          style="margin-left: auto; color: var(--home-green, #72e0ad);"
-        >
-          Alle Anzeigen →
-        </a>
-      </div>
+                  <a
+                    href="./pantry.html"
+                    class="text-sm font-medium"
+                    style="margin-left: auto; color: var(--home-green, #72e0ad)"
+                  >
+                    Alle Anzeigen →
+                  </a>
+                </div>
 
-      <p class="muted mt-2 text-xs">
-        Diese Produkte solltest du bald verbrauchen.
-      </p>
-    </header>
+                <p class="muted mt-2 text-xs">
+                  Diese Produkte solltest du bald verbrauchen.
+                </p>
+              </header>
 
-    <div id="dringendeProdukteContainer" class="grid"></div>
+              <div id="dringendeProdukteContainer" class="grid"></div>
 
-    <p id="keineDringendenProdukte" class="muted hidden text-sm">
-      Alles frisch! Keine dringend zu verbrauchenden Produkte.
-    </p>
-  </div>
-</div>
+              <p id="keineDringendenProdukte" class="muted hidden text-sm">
+                Alles frisch! Keine dringend zu verbrauchenden Produkte.
+              </p>
+            </div>
           </div>
         </section>
 
         <footer class="muted mt-8 flex justify-between gap-4 text-[11px]">
-          <span>Home feels better together.</span>
-          <span>HomeFlow · Your everyday companion</span>
+          <span>Zuhause ist es gemeinsam am schönsten.</span>
+          <span>HomeFlow · Dein Alltagsbegleiter</span>
         </footer>
       </main>
     </div>
@@ -395,29 +385,29 @@
     <!-- Add task dialog -->
     <dialog id="task-modal" class="modal">
       <div class="modal-box dialog-panel">
-        <h3 class="text-lg font-semibold">One less thing to remember</h3>
+        <h3 class="text-lg font-semibold">Eine Sorge weniger</h3>
 
         <form id="task-form" class="mt-5 space-y-4">
           <label class="block">
-            <span class="muted mb-2 block text-sm"> What needs doing? </span>
+            <span class="muted mb-2 block text-sm"> Was ist zu tun? </span>
 
             <input
               id="task-title"
               class="input form-field w-full"
-              placeholder="e.g. Water the plants"
+              placeholder="z.B. Pflanzen gießen"
               maxlength="100"
               required
             />
           </label>
 
           <label class="block">
-            <span class="muted mb-2 block text-sm"> Category </span>
+            <span class="muted mb-2 block text-sm"> Kategorie </span>
 
             <select id="task-category" class="select form-field w-full">
-              <option>Cleaning</option>
-              <option>Shopping</option>
-              <option>Laundry</option>
-              <option>Other</option>
+              <option>Reinigung</option>
+              <option>Einkauf</option>
+              <option>Wäsche</option>
+              <option>Sonstiges</option>
             </select>
           </label>
 
@@ -427,43 +417,45 @@
               class="btn btn-ghost"
               data-close-dialog="task-modal"
             >
-              Cancel
+              Abbrechen
             </button>
 
-            <button type="submit" class="btn mint-btn">Add task</button>
+            <button type="submit" class="btn mint-btn">
+              Aufgabe hinzufügen
+            </button>
           </div>
         </form>
       </div>
 
       <form method="dialog" class="modal-backdrop">
-        <button>Close</button>
+        <button>Schließen</button>
       </form>
     </dialog>
 
     <!-- Shopping dialog -->
     <dialog id="shopping-modal" class="modal">
       <div class="modal-box dialog-panel">
-        <h3 class="text-lg font-semibold">Shopping list</h3>
+        <h3 class="text-lg font-semibold">Einkaufsliste</h3>
 
         <div class="mt-5 grid gap-3">
           <label class="shopping-item">
             <input type="checkbox" class="checkbox checkbox-sm" />
-            Oat milk
+            Hafermilch
           </label>
 
           <label class="shopping-item">
             <input type="checkbox" class="checkbox checkbox-sm" />
-            Eggs
+            Eier
           </label>
 
           <label class="shopping-item">
             <input type="checkbox" class="checkbox checkbox-sm" />
-            Olive oil
+            Olivenöl
           </label>
 
           <label class="shopping-item">
             <input type="checkbox" class="checkbox checkbox-sm" />
-            Tomatoes
+            Tomaten
           </label>
 
           <label class="shopping-item">
@@ -473,27 +465,27 @@
 
           <label class="shopping-item">
             <input type="checkbox" class="checkbox checkbox-sm" />
-            Greek yogurt
+            Griechischer Joghurt
           </label>
 
           <label class="shopping-item">
             <input type="checkbox" class="checkbox checkbox-sm" />
-            Apples
+            Äpfel
           </label>
 
           <label class="shopping-item">
             <input type="checkbox" class="checkbox checkbox-sm" />
-            Coffee
+            Kaffee
           </label>
         </div>
 
         <form method="dialog" class="modal-action">
-          <button class="btn mint-btn">Done</button>
+          <button class="btn mint-btn">Fertig</button>
         </form>
       </div>
 
       <form method="dialog" class="modal-backdrop">
-        <button>Close</button>
+        <button>Schließen</button>
       </form>
     </dialog>
   </body>

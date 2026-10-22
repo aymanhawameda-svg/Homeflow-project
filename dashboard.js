@@ -1,9 +1,21 @@
-// المفتاح الموحد التابع لصفحة التاسك
 const REAL_TASKS_KEY = "homeflow_tasks";
 const BUDGET_EXPENSES_KEY = "homeflow_expenses";
 const BUDGET_FIXCOSTS_KEY = "homeflow_fixcosts";
 
-// دالة لجلب المهام وتحويلها لنسق يتناسب مع الداشبورد
+let currentFilter = "all";
+let tasks = [];
+
+const categoryClasses = {
+  Reinigung: "badge-success",
+  Einkauf: "badge-warning",
+  Wäsche: "badge-info",
+  Sonstiges: "badge-neutral",
+  Cleaning: "badge-success",
+  Shopping: "badge-warning",
+  Laundry: "badge-info",
+  Other: "badge-neutral",
+};
+
 function loadTasks() {
   try {
     const saved = localStorage.getItem(REAL_TASKS_KEY);
@@ -14,7 +26,7 @@ function loadTasks() {
           id: t.id || Date.now().toString(),
           title: t.title || "Ohne Titel",
           category: t.category || "Sonstiges",
-          person: t.assignee || t.person || "Alle",
+          person: t.assignee || t.person || "Ayman",
           time: t.dueDate
             ? t.dueDate.includes("T")
               ? t.dueDate.split("T")[0]
@@ -24,32 +36,20 @@ function loadTasks() {
         }));
       }
     }
-<<<<<<< Updated upstream
-  } catch {}
-
-  return initialTasks.map((task) => ({ ...task }));
-=======
   } catch (e) {
     console.error("Fehler beim Laden der Aufgaben", e);
   }
   return [];
->>>>>>> Stashed changes
 }
 
-// دالة لحفظ التعديلات في LocalStorage
 function saveTasksToStorage(tasksList) {
   try {
-<<<<<<< Updated upstream
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-  } catch {}
-=======
-    // تحويلها للنسق الموحد لصفحة التاسك
     const formattedForTasksPage = tasksList.map((t) => ({
       id: t.id || Date.now().toString(),
       title: t.title,
       category: t.category,
       assignee: t.person,
-      dueDate: t.time || new Date().toISOString(),
+      dueDate: t.time ? `${t.time}T00:00` : new Date().toISOString(),
       completed: t.done,
     }));
     localStorage.setItem(REAL_TASKS_KEY, JSON.stringify(formattedForTasksPage));
@@ -58,7 +58,6 @@ function saveTasksToStorage(tasksList) {
   }
 }
 
-// دالة لتحديث الميزانية تلقائياً في البطاقة العليا بالداشبورد
 function updateBudgetCard() {
   try {
     const expenses =
@@ -83,16 +82,13 @@ function updateBudgetCard() {
   } catch (e) {
     console.error("Fehler beim Laden des Budgets", e);
   }
->>>>>>> Stashed changes
 }
 
 function initializeDashboard() {
   document.querySelectorAll("[data-open-dialog]").forEach((trigger) => {
     trigger.addEventListener("click", (event) => {
       event.preventDefault();
-
       const dialog = document.getElementById(trigger.dataset.openDialog);
-
       if (dialog && !dialog.open) {
         dialog.showModal();
       }
@@ -102,15 +98,15 @@ function initializeDashboard() {
   document.querySelectorAll("[data-close-dialog]").forEach((trigger) => {
     trigger.addEventListener("click", (event) => {
       event.preventDefault();
-
       const dialog = document.getElementById(trigger.dataset.closeDialog);
-
       if (dialog) {
         dialog.close();
       }
     });
   });
 
+  tasks = loadTasks();
+  updateBudgetCard();
   initializeTasks();
   zeigeDringendeProdukte();
 }
@@ -126,27 +122,14 @@ function initializeTasks() {
   const navCount = document.getElementById("nav-count");
   const filterButtons = document.querySelectorAll("[data-filter]");
 
-<<<<<<< Updated upstream
-  if (!taskList || !taskForm || !taskTitle || !taskCategory || !taskModal) {
+  if (!taskList || !taskForm || !taskTitle || !taskCategory) {
     return;
   }
 
   function updateTaskSummary() {
     const open = tasks.filter((task) => !task.done).length;
-
     if (openCount) openCount.textContent = open;
     if (navCount) navCount.textContent = open;
-=======
-  let tasks = loadTasks();
-  let currentFilter = "all";
-
-  // تحديث عداد المهام المفتوحة المتبقية
-  function updateTaskSummary() {
-    const open = tasks.filter((task) => !task.done).length;
-    if (openCount) openCount.textContent = open;
-    if (navCount) navCount.textContent = open;
-    updateBudgetCard();
->>>>>>> Stashed changes
   }
 
   function matchesFilter(task) {
@@ -166,6 +149,21 @@ function initializeTasks() {
     checkbox.checked = task.done;
 
     checkbox.addEventListener("change", () => {
+      const task = tasks[index];
+
+      // جلب تاريخ اليوم بصيغة YYYY-MM-DD
+      const now = new Date();
+      const todayStr = now.toISOString().split("T")[0];
+      const taskDateStr = task.time ? task.time.split("T")[0] : todayStr;
+
+      if (taskDateStr !== todayStr && !task.done) {
+        alert(
+          "⚠️ Sie können diese Aufgabe nur an dem Tag als erledigt markieren, an dem sie fällig ist (Heute).",
+        );
+        checkbox.checked = false;
+        return;
+      }
+
       tasks[index].done = checkbox.checked;
       saveTasksToStorage(tasks);
       renderTasks();
@@ -185,15 +183,10 @@ function initializeTasks() {
     content.append(title, meta);
 
     const badge = document.createElement("span");
-<<<<<<< Updated upstream
-
     const categoryClass =
-      categoryClasses[task.category] || categoryClasses.Other;
+      categoryClasses[task.category] || categoryClasses.Sonstiges;
 
     badge.className = `badge task-badge ${categoryClass}`;
-=======
-    badge.className = "badge badge-sm badge-outline";
->>>>>>> Stashed changes
     badge.textContent = task.category;
 
     row.append(checkbox, content, badge);
@@ -235,70 +228,39 @@ function initializeTasks() {
     });
   });
 
-<<<<<<< Updated upstream
   taskTitle.addEventListener("input", () => {
     taskTitle.setCustomValidity("");
   });
 
   taskForm.addEventListener("submit", (event) => {
     event.preventDefault();
-=======
-  // إدارة النوافذ المنبثقة (Dialogs)
-  document.querySelectorAll("[data-open-dialog]").forEach((trigger) => {
-    trigger.addEventListener("click", (event) => {
-      event.preventDefault();
-      const dialog = document.getElementById(trigger.dataset.openDialog);
-      if (dialog && !dialog.open) {
-        dialog.showModal();
-      }
-    });
+
+    const newTask = {
+      id: Date.now().toString(),
+      title: taskTitle.value.trim(),
+      category: taskCategory.value,
+      person: "Ayman",
+      time: new Date().toISOString().split("T")[0],
+      done: false,
+    };
+
+    tasks.push(newTask);
+    saveTasksToStorage(tasks);
+    setFilter("all");
+
+    taskForm.reset();
+    if (taskModal) taskModal.close();
+    renderTasks();
   });
-
-  document.querySelectorAll("[data-close-dialog]").forEach((trigger) => {
-    trigger.addEventListener("click", (event) => {
-      event.preventDefault();
-      const dialog = document.getElementById(trigger.dataset.closeDialog);
-      if (dialog) dialog.close();
-    });
-  });
-
-  // إضافة مهمة جديدة من الداشبورد لتتخزن مباشرة في صفحة Tasks
-  if (taskForm) {
-    taskForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const title = taskTitle.value.trim();
-      if (!title) return;
-
-      const newTask = {
-        id: Date.now().toString(),
-        title: title,
-        category: taskCategory.value,
-        person: "Alex",
-        time: new Date().toISOString().split("T")[0],
-        done: false,
-      };
->>>>>>> Stashed changes
-
-      tasks.push(newTask);
-      saveTasksToStorage(tasks);
-      setFilter("all");
-
-      taskForm.reset();
-      if (taskModal) taskModal.close();
-    });
-  }
 
   renderTasks();
 }
 
-<<<<<<< Updated upstream
 function restlicheTage(produkt) {
   if (produkt.ablaufdatum) {
     const heute = new Date();
     heute.setHours(0, 0, 0, 0);
-
     const datum = new Date(produkt.ablaufdatum + "T00:00:00");
-
     return Math.round((datum - heute) / 86400000);
   }
 
@@ -315,7 +277,6 @@ function restlicheTage(produkt) {
 
 function zeigeDringendeProdukte() {
   const container = document.getElementById("dringendeProdukteContainer");
-
   const hinweis = document.getElementById("keineDringendenProdukte");
 
   if (!container || !hinweis) return;
@@ -324,7 +285,6 @@ function zeigeDringendeProdukte() {
 
   try {
     const gespeichert = JSON.parse(localStorage.getItem("produkte"));
-
     if (Array.isArray(gespeichert)) {
       produkte = gespeichert;
     }
@@ -395,8 +355,6 @@ function zeigeDringendeProdukte() {
   });
 }
 
-=======
->>>>>>> Stashed changes
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initializeDashboard, {
     once: true,
@@ -405,10 +363,30 @@ if (document.readyState === "loading") {
   initializeDashboard();
 }
 
-window.addEventListener("pageshow", zeigeDringendeProdukte);
-window.addEventListener("focus", zeigeDringendeProdukte);
+window.addEventListener("pageshow", () => {
+  tasks = loadTasks();
+  updateBudgetCard();
+  zeigeDringendeProdukte();
+});
+
+window.addEventListener("focus", () => {
+  tasks = loadTasks();
+  updateBudgetCard();
+  zeigeDringendeProdukte();
+});
 
 window.addEventListener("storage", (event) => {
+  if (event.key === REAL_TASKS_KEY || event.key === null) {
+    tasks = loadTasks();
+    initializeTasks();
+  }
+  if (
+    event.key === BUDGET_EXPENSES_KEY ||
+    event.key === BUDGET_FIXCOSTS_KEY ||
+    event.key === null
+  ) {
+    updateBudgetCard();
+  }
   if (event.key === "produkte" || event.key === null) {
     zeigeDringendeProdukte();
   }

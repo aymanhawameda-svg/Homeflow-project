@@ -4,7 +4,7 @@ const MEMBERS_KEY = "homeflow_members";
 let editingTaskId = null;
 let currentFilterTime = "all"; // 'all', 'today', 'week'
 
-// --- جلب وحفظ البيانات من LocalStorage ---
+
 function getTasks() {
   const tasks = localStorage.getItem(TASKS_KEY);
   return tasks ? JSON.parse(tasks) : [];
@@ -16,14 +16,14 @@ function saveTasks(tasks) {
 
 function getMembers() {
   const members = localStorage.getItem(MEMBERS_KEY);
-  return members ? JSON.parse(members) : ["Alex", "Sadeen", "Ayman"]; // أسماء افتراضية عند البدء
+  return members ? JSON.parse(members) : ["Alex", "Sadeen", "Ayman"]; 
 }
 
 function saveMembers(members) {
   localStorage.setItem(MEMBERS_KEY, JSON.stringify(members));
 }
 
-// --- إدارة أفراد العائلة (Family Members) ---
+
 document
   .getElementById("add-member-form")
   .addEventListener("submit", function (e) {
@@ -73,7 +73,7 @@ function populateAssigneeSelects() {
   const taskAssigneeSelect = document.getElementById("task-assignee-select");
   const filterPersonSelect = document.getElementById("filter-person-select");
 
-  // حفظ الخيار المحدد سابقاً إن وجد
+  
   const selectedFilterPerson = filterPersonSelect.value;
 
   taskAssigneeSelect.innerHTML =
@@ -88,7 +88,7 @@ function populateAssigneeSelects() {
   filterPersonSelect.value = selectedFilterPerson || "all";
 }
 
-// --- فتح نافذة إضافة مهمة جديدة ---
+
 function openAddModal() {
   editingTaskId = null;
   document.getElementById("modal-title").textContent =
@@ -97,7 +97,7 @@ function openAddModal() {
   task_modal.showModal();
 }
 
-// --- التعامل مع تقديم نموذج المهمة (إضافة أو تعديل) ---
+
 document
   .getElementById("add-task-form")
   .addEventListener("submit", function (e) {
@@ -137,7 +137,7 @@ document
     renderTasks();
   });
 
-// --- فتح نافذة التعديل تعبئة البيانات ---
+
 function editTask(id) {
   const tasks = getTasks();
   const task = tasks.find((t) => t.id === id);
@@ -153,7 +153,7 @@ function editTask(id) {
   task_modal.showModal();
 }
 
-// --- تغيير حالة المهمة (مع شرط اليوم والنزول للأسفل) ---
+
 function toggleTask(id) {
   const tasks = getTasks();
   const task = tasks.find((t) => t.id === id);
@@ -163,7 +163,7 @@ function toggleTask(id) {
   const todayStr = now.toISOString().split("T")[0];
   const taskDateStr = task.dueDate.split("T")[0];
 
-  // شرط إنجاز المهمة أن يكون تاريخها اليوم
+  
   if (taskDateStr !== todayStr && !task.completed) {
     alert(
       "⚠️ Sie können diese Aufgabe nur an dem Tag als erledigt markieren, an dem sie fällig ist (Heute).",
@@ -177,7 +177,7 @@ function toggleTask(id) {
   renderTasks();
 }
 
-// --- تأكيد الحذف ---
+
 function deleteTask(id) {
   if (confirm("Möchten Sie diese Aufgabe wirklich löschen?")) {
     let tasks = getTasks();
@@ -187,11 +187,11 @@ function deleteTask(id) {
   }
 }
 
-// --- التحكم في أزرار الوقت (Time Filter) ---
+
 function setFilterTime(type) {
   currentFilterTime = type;
 
-  // تحديث شكل الأزرار النشطة
+  
   document
     .querySelectorAll("#filter-all, #filter-today, #filter-week")
     .forEach((btn) => {
@@ -206,7 +206,7 @@ function setFilterTime(type) {
   renderTasks();
 }
 
-// --- عرض وتصفية وترتيب المهام ---
+
 function renderTasks() {
   const tasks = getTasks();
   const selectedPerson = document.getElementById("filter-person-select").value;
@@ -228,7 +228,7 @@ function renderTasks() {
   tomorrow.setDate(now.getDate() + 1);
   const tomorrowStr = tomorrow.toISOString().split("T")[0];
 
-  // حساب نهاية الأسبوع الحالية لفلتر (Diese Woche)
+  
   const endOfWeek = new Date();
   endOfWeek.setDate(now.getDate() + (7 - now.getDay()));
 
@@ -237,14 +237,14 @@ function renderTasks() {
     upcomingCount = 0,
     overdueCount = 0;
 
-  // تصفية وحفظ الأجزاء المفلترة
+  
   let filteredTasks = tasks.filter((task) => {
-    // 1. فلترة الشخص المسؤول
+    
     if (selectedPerson !== "all" && task.assignee !== selectedPerson) {
       return false;
     }
 
-    // 2. فلترة الوقت
+    
     const taskDate = new Date(task.dueDate);
     const taskDateStr = task.dueDate.split("T")[0];
 
@@ -261,7 +261,7 @@ function renderTasks() {
     return true;
   });
 
-  // **ترتيب المهام:** غير المكتمل أولاً، ثم المكتمل يتراجع للأسفل
+  
   filteredTasks.sort((a, b) => a.completed - b.completed);
 
   filteredTasks.forEach((task) => {
@@ -315,7 +315,12 @@ function renderTasks() {
   document.getElementById("upcoming-count").textContent = upcomingCount;
   document.getElementById("overdue-count").textContent = overdueCount;
 
-  // إخفاء/إظهار قسم Overdue
+  const navCount = document.getElementById("nav-count");
+  if (navCount) {
+    navCount.textContent = tasks.filter((t) => !t.completed).length;
+  }
+
+  
   const overdueSection = document.getElementById("overdue-section");
   if (overdueCount > 0) {
     overdueSection.classList.remove("hidden");
@@ -324,7 +329,7 @@ function renderTasks() {
   }
 }
 
-// تهيئة القوائم عند التحميل الأولي
+
 document.addEventListener("DOMContentLoaded", () => {
   renderMembers();
   populateAssigneeSelects();

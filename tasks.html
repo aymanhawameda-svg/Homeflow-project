@@ -3,315 +3,312 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HomeFlow - Aufgaben</title>
-    <!-- Tailwind CSS & DaisyUI -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css"
-      rel="stylesheet"
-      type="text/css"
-    />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>HomeFlow — Aufgaben</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="style.css" />
+    <script src="tasks.js" defer></script>
+    <script src="./main.js" defer></script>
   </head>
-  <body class="min-h-screen">
-    <div class="flex min-h-screen">
-      <div id="sidebar-container"></div>
-      <div class="max-w-4xl mx-auto space-y-6">
-        <!-- رأس الصفحة مع زر إضافة مهمة وزر إضافة فرد عائلة -->
-        <div class="my-card flex flex-wrap justify-between items-center gap-4">
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" class="hidden" aria-hidden="true">
+      <symbol id="home" viewBox="0 0 24 24">
+        <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-8H9v8H4a1 1 0 0 1-1-1z" />
+      </symbol>
+      <symbol id="check" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <path d="m8 12 3 3 5-6" />
+      </symbol>
+      <symbol id="cart" viewBox="0 0 24 24">
+        <path d="M2 3h3l3 13h11l3-9H6" />
+        <circle cx="9" cy="21" r="1" />
+        <circle cx="19" cy="21" r="1" />
+      </symbol>
+      <symbol id="leaf" viewBox="0 0 24 24">
+        <path d="M20 3c-9-1-15 3-15 9a6 6 0 0 0 6 6c6 0 9-6 9-15Z" />
+        <path d="M4 21 15 10" />
+      </symbol>
+      <symbol id="wallet" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="15" rx="3" />
+        <path d="M4 5V4a2 2 0 0 1 2-2h12v3M16 11h5v5h-5a2 2 0 0 1 0-5Z" />
+      </symbol>
+      <symbol id="users" viewBox="0 0 24 24">
+        <circle cx="9" cy="7" r="3" />
+        <path
+          d="M3 21v-3a6 6 0 0 1 12 0v3M16 4a3 3 0 0 1 0 6M18 15a5 5 0 0 1 3 5"
+        />
+      </symbol>
+    </svg>
+
+    <div class="layout">
+      <aside class="sidebar p-5 lg:p-6">
+        <a href="./dashboard.html" class="flex items-center gap-3 px-2">
+          <span class="icon logo-icon"
+            ><svg><use href="#home" /></svg
+          ></span>
           <div>
-            <h2 class="text-2xl font-bold flex items-center gap-2">
-              <span style="color: var(--home-green)">✓</span> Aufgaben
-            </h2>
-            <p>
-              Verwalten und organisieren Sie Ihre täglichen Haushaltsarbeiten an
-              einem Ort.
-            </p>
+            <div class="text-xl font-bold tracking-tight">Zuhause</div>
+            <div class="muted text-xs">Ein bisschen weniger Alltagstrubel.</div>
           </div>
-          <div class="flex gap-2">
-            <button
-              onclick="member_modal.showModal()"
-              class="btn-secondary-custom"
-            >
-              👤 + Mitglied
-            </button>
-            <button onclick="openAddModal()" class="btn-custom">
-              + Aufgabe hinzufügen
-            </button>
-          </div>
-        </div>
-
-        <!-- شريط الفلاتر (حسب الوقت وحسب الشخص المسؤول) -->
-        <div
-          class="my-card py-4 flex flex-wrap gap-4 items-center justify-between"
+        </a>
+        <div class="sidebar-label mt-9 hidden px-4 lg:block"></div>
+        <nav
+          class="mt-4 flex gap-2 overflow-x-auto lg:flex-col"
+          aria-label="Main navigation"
         >
-          <div class="flex gap-2 items-center">
-            <span class="text-xs font-semibold" style="color: var(--home-muted)"
-              >Zeit-Filter:</span
+          <a href="./dashboard.html" class="nav-item">
+            <span class="icon"
+              ><svg><use href="#home" /></svg></span
+            >Übersicht
+          </a>
+          <a href="./tasks.html" class="nav-item active">
+            <span class="icon"
+              ><svg><use href="#check" /></svg></span
+            >Aufgaben
+            <span id="nav-count" class="badge badge-sm nav-count ml-auto"
+              >0</span
             >
-            <button
-              id="filter-all"
-              onclick="setFilterTime('all')"
-              class="btn btn-sm bg-[#173e30] text-[#72e0ad] border-none"
-            >
-              Alle
-            </button>
-            <button
-              id="filter-today"
-              onclick="setFilterTime('today')"
-              class="btn btn-sm btn-ghost text-xs text-gray-400"
-            >
-              Heute
-            </button>
-            <button
-              id="filter-week"
-              onclick="setFilterTime('week')"
-              class="btn btn-sm btn-ghost text-xs text-gray-400"
-            >
-              Diese Woche
-            </button>
-          </div>
-
-          <div class="flex gap-2 items-center">
-            <span class="text-xs font-semibold" style="color: var(--home-muted)"
-              >Person:</span
-            >
-            <select
-              id="filter-person-select"
-              onchange="renderTasks()"
-              class="select select-sm select-bordered bg-[#0b100f] border-[#293630] text-xs"
-            >
-              <option value="all">Alle Personen</option>
-            </select>
-          </div>
+          </a>
+          <a href="./newstyle.html" class="nav-item whitespace-nowrap">
+            <span class="icon"
+              ><svg><use href="#cart" /></svg></span
+            >Einkaufsliste
+          </a>
+          <a href="./pantry.html" class="nav-item">
+            <span class="icon"
+              ><svg><use href="#leaf" /></svg></span
+            >Vorräte
+          </a>
+          <a href="./budget.html" class="nav-item">
+            <span class="icon"
+              ><svg><use href="#wallet" /></svg></span
+            >Budget
+          </a>
+          <a href="#household" class="nav-item">
+            <span class="icon"
+              ><svg><use href="#users" /></svg></span
+            >Haushalt
+          </a>
+        </nav>
+        <div id="household" class="mt-8 hidden items-center gap-3 px-2 lg:flex">
+          <div class="profile-avatar">A</div>
+          <div><p class="text-sm font-medium">Ayman Altman</p></div>
         </div>
+      </aside>
 
-        <!-- أقسام المهام -->
-        <div class="space-y-6">
-          <!-- مهام متأخرة Overdue -->
-          <div id="overdue-section" class="hidden my-card border-error/40">
-            <h3
-              class="text-sm font-semibold text-error mb-2 flex items-center gap-1"
-            >
-              Überfällig
-              <span
-                id="overdue-count"
-                class="badge badge-error badge-sm text-white"
-                >0</span
-              >
-            </h3>
-            <div id="overdue-list" class="space-y-2"></div>
-          </div>
-
-          <!-- مهام اليوم Heute -->
-          <div id="today-section" class="my-card">
-            <h3
-              class="text-sm font-semibold mb-3 flex items-center gap-1"
-              style="color: var(--home-text)"
-            >
-              📅 Heute
-              <span
-                id="today-count"
-                class="badge badge-sm"
-                style="
-                  background: var(--home-green-dark);
-                  color: var(--home-green);
-                "
-                >0</span
-              >
-            </h3>
-            <div id="today-list" class="space-y-2"></div>
-          </div>
-
-          <!-- مهام غدًا Morgen -->
-          <div id="tomorrow-section" class="my-card">
-            <h3
-              class="text-sm font-semibold mb-3 flex items-center gap-1"
-              style="color: var(--home-text)"
-            >
-              ⏳ Morgen
-              <span id="tomorrow-count" class="badge badge-sm badge-ghost"
-                >0</span
-              >
-            </h3>
-            <div id="tomorrow-list" class="space-y-2"></div>
-          </div>
-
-          <!-- مهام قادمة Demnächst -->
-          <div id="upcoming-section" class="my-card">
-            <h3
-              class="text-sm font-semibold mb-3 flex items-center gap-1"
-              style="color: var(--home-text)"
-            >
-              🔮 Demnächst (Später)
-              <span id="upcoming-count" class="badge badge-sm badge-ghost"
-                >0</span
-              >
-            </h3>
-            <div id="upcoming-list" class="space-y-2"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal نافذة إضافة مهمة جديدة أو تعديلها -->
-      <dialog id="task_modal" class="modal">
-        <div
-          class="modal-box"
-          style="
-            background: var(--home-surface);
-            border: 1px solid var(--home-border);
-            color: var(--home-text);
-          "
-        >
-          <h3 id="modal-title" class="font-bold text-lg mb-4">
-            Neue Aufgabe hinzufügen
-          </h3>
-          <form id="add-task-form" class="space-y-4">
-            <div class="form-control">
-              <label class="label"
-                ><span class="label-text" style="color: var(--home-muted)"
-                  >Aufgabenname</span
-                ></label
-              >
-              <input
-                type="text"
-                id="task-title"
-                placeholder="z.B. Küche aufräumen"
-                class="input input-bordered w-full bg-[#0b100f] border-[#293630]"
-                required
-              />
+      <main class="pantry">
+        <section class="card bg-base-100 rounded-3xl p-5 sm:p-8 space-y-6">
+          <!-- Header -->
+          <div
+            class="flex flex-wrap items-center justify-between gap-4 border-b border-base-300 pb-4"
+          >
+            <div>
+              <h1 class="text-2xl sm:text-3xl font-bold">✓ Aufgaben</h1>
+              <p class="text-xs text-base-content/70 mt-1">
+                Verwalten und organisieren Sie Ihre täglichen Haushaltsarbeiten
+                an einem Ort.
+              </p>
             </div>
+            <div class="flex gap-2">
+              <button
+                onclick="document.getElementById('member_modal').showModal()"
+                class="btn btn-outline btn-sm rounded-xl"
+              >
+                + Mitglied
+              </button>
+              <button
+                onclick="openAddModal()"
+                class="btn btn-accent btn-sm rounded-xl"
+              >
+                + Aufgabe hinzufügen
+              </button>
+            </div>
+          </div>
 
-            <div class="grid grid-cols-2 gap-4">
-              <div class="form-control">
-                <label class="label"
-                  ><span class="label-text" style="color: var(--home-muted)"
-                    >Kategorie</span
-                  ></label
+          <div
+            class="bg-base-200/50 p-4 rounded-2xl flex flex-wrap gap-4 items-center justify-between"
+          >
+            <div class="flex items-center gap-2">
+              <span
+                class="text-xs font-semibold uppercase tracking-wider text-base-content/65"
+                >Zeit-Filter:</span
+              >
+              <div class="join">
+                <button
+                  id="filter-all"
+                  onclick="setFilterTime('all')"
+                  class="btn btn-sm bg-[#173e30] text-[#72e0ad] border-none join-item text-xs"
                 >
-                <select
-                  id="task-category"
-                  class="select select-bordered w-full bg-[#0b100f] border-[#293630]"
+                  Alle
+                </button>
+                <button
+                  id="filter-today"
+                  onclick="setFilterTime('today')"
+                  class="btn btn-sm btn-ghost text-xs text-gray-400 join-item"
                 >
-                  <option value="Reinigung">Reinigung</option>
-                  <option value="Wäsche">Wäsche</option>
-                  <option value="Einkauf">Einkauf</option>
-                  <option value="Sonstiges">Sonstiges</option>
-                </select>
-              </div>
-
-              <div class="form-control">
-                <label class="label"
-                  ><span class="label-text" style="color: var(--home-muted)"
-                    >Zugewiesen an</span
-                  ></label
+                  Heute
+                </button>
+                <button
+                  id="filter-week"
+                  onclick="setFilterTime('week')"
+                  class="btn btn-sm btn-ghost text-xs text-gray-400 join-item"
                 >
-                <!-- قائمة منسدلة ديناميكية بأسماء العائلة -->
-                <select
-                  id="task-assignee-select"
-                  class="select select-bordered w-full bg-[#0b100f] border-[#293630]"
-                >
-                  <!-- تعبأ تلقائياً بـ JavaScript -->
-                </select>
+                  Diese Woche
+                </button>
               </div>
             </div>
-
-            <div class="form-control">
-              <label class="label"
-                ><span class="label-text" style="color: var(--home-muted)"
-                  >Fälligkeitsdatum & Uhrzeit</span
-                ></label
+            <div class="flex items-center gap-2">
+              <span
+                class="text-xs font-semibold uppercase tracking-wider text-base-content/65"
+                >Person:</span
               >
-              <input
-                type="datetime-local"
-                id="task-datetime"
-                class="input input-bordered w-full bg-[#0b100f] border-[#293630]"
-                required
-              />
-            </div>
-
-            <div class="modal-action">
-              <button
-                type="button"
-                onclick="task_modal.close()"
-                class="btn btn-ghost text-gray-400"
+              <select
+                id="filter-person-select"
+                onchange="renderTasks()"
+                class="select select-xs select-bordered rounded-lg"
               >
-                Abbrechen
-              </button>
-              <button type="submit" class="btn-custom">Speichern</button>
+                <option value="all">Alle Personen</option>
+              </select>
             </div>
-          </form>
-        </div>
-      </dialog>
-
-      <!-- Modal نافذة إضافة وتدبير أفراد العائلة -->
-      <dialog id="member_modal" class="modal">
-        <div
-          class="modal-box"
-          style="
-            background: var(--home-surface);
-            border: 1px solid var(--home-border);
-            color: var(--home-text);
-          "
-        >
-          <h3 class="font-bold text-lg mb-4">Familienmitglied hinzufügen</h3>
-          <form id="add-member-form" class="space-y-4">
-            <div class="form-control">
-              <label class="label"
-                ><span class="label-text" style="color: var(--home-muted)"
-                  >Name des Mitglieds</span
-                ></label
-              >
-              <input
-                type="text"
-                id="member-name"
-                placeholder="z.B. Alex oder Sarah"
-                class="input input-bordered w-full bg-[#0b100f] border-[#293630]"
-                required
-              />
-            </div>
-
-            <div class="modal-action">
-              <button
-                type="button"
-                onclick="member_modal.close()"
-                class="btn btn-ghost text-gray-400"
-              >
-                Schließen
-              </button>
-              <button type="submit" class="btn-custom">Hinzufügen</button>
-            </div>
-          </form>
-
-          <!-- قائمة أفراد العائلة المضافين حالياً -->
-          <div class="mt-6 border-t border-[#293630] pt-4">
-            <h4
-              class="text-xs font-semibold mb-2"
-              style="color: var(--home-muted)"
-            >
-              Aktuelle Mitglieder:
-            </h4>
-            <div id="members-list" class="flex flex-wrap gap-2"></div>
           </div>
-        </div>
-      </dialog>
+
+          <div class="space-y-6">
+            <div id="overdue-section" class="hidden space-y-2">
+              <h3 class="text-sm font-bold text-error flex items-center gap-2">
+                ⚠️ Überfällig
+                <span id="overdue-count" class="badge badge-error badge-sm"
+                  >0</span
+                >
+              </h3>
+              <div id="overdue-list" class="space-y-2"></div>
+            </div>
+
+            <div class="space-y-2">
+              <h3
+                class="text-sm font-bold text-[#72e0ad] flex items-center gap-2"
+              >
+                🟢 Heute
+                <span id="today-count" class="badge badge-success badge-sm"
+                  >0</span
+                >
+              </h3>
+              <div id="today-list" class="space-y-2"></div>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold flex items-center gap-2">
+                📅 Morgen
+                <span id="tomorrow-count" class="badge badge-neutral badge-sm"
+                  >0</span
+                >
+              </h3>
+              <div id="tomorrow-list" class="space-y-2"></div>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold flex items-center gap-2">
+                📌 Demnächst (Später)
+                <span id="upcoming-count" class="badge badge-neutral badge-sm"
+                  >0</span
+                >
+              </h3>
+              <div id="upcoming-list" class="space-y-2"></div>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
 
-    <!-- ربط ملف الجافاسكريبت -->
-    <script src="tasks.js"></script>
-    <script>
-      fetch("sidebar.html")
-        .then((response) => response.text())
-        .then((data) => {
-          document.getElementById("sidebar-container").innerHTML = data;
-          // تحديث زر الصفحة النشطة تلقائياً
-          const currentPath = window.location.pathname.split("/").pop();
-          document.querySelectorAll(".nav-item").forEach((link) => {
-            if (link.getAttribute("href") === currentPath) {
-              link.classList.add("bg-[#173e30]", "text-[#72e0ad]");
-            }
-          });
-        });
-    </script>
+    <dialog id="task_modal" class="modal">
+      <div class="modal-box rounded-3xl bg-base-100 p-6 space-y-4">
+        <h3 id="modal-title" class="text-lg font-bold">
+          Neue Aufgabe hinzufügen
+        </h3>
+        <form id="add-task-form" class="space-y-4">
+          <div>
+            <label class="label text-xs">Titel</label>
+            <input
+              type="text"
+              id="task-title"
+              class="input input-bordered w-full rounded-xl"
+              placeholder="Aufgabenname..."
+              required
+            />
+          </div>
+          <div>
+            <label class="label text-xs">Kategorie</label>
+            <input
+              type="text"
+              id="task-category"
+              class="input input-bordered w-full rounded-xl"
+              placeholder="Kategorie (z.B. Reinigung)"
+              required
+            />
+          </div>
+          <div>
+            <label class="label text-xs">Zuständige Person</label>
+            <select
+              id="task-assignee-select"
+              class="select select-bordered w-full rounded-xl"
+            >
+              <option value="Nicht zugewiesen">Nicht zugewiesen</option>
+            </select>
+          </div>
+          <div>
+            <label class="label text-xs">Fälligkeitsdatum & Uhrzeit</label>
+            <input
+              type="datetime-local"
+              id="task-datetime"
+              class="input input-bordered w-full rounded-xl"
+              required
+            />
+          </div>
+          <div class="modal-action">
+            <button type="submit" class="btn btn-accent rounded-xl w-full">
+              Speichern
+            </button>
+          </div>
+        </form>
+        <form method="dialog">
+          <button
+            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+          >
+            ✕
+          </button>
+        </form>
+      </div>
+    </dialog>
+
+    <dialog id="member_modal" class="modal">
+      <div class="modal-box rounded-3xl bg-base-100 p-6 space-y-4">
+        <h3 class="text-lg font-bold">Mitglieder verwalten</h3>
+        <form id="add-member-form" class="space-y-3">
+          <div>
+            <label class="label text-xs">Neuer Name</label>
+            <input
+              type="text"
+              id="member-name"
+              placeholder="Name eingeben..."
+              class="input input-bordered w-full rounded-xl"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-outline rounded-xl w-full">
+            Hinzufügen
+          </button>
+        </form>
+        <div class="space-y-2 pt-2">
+          <label class="label text-xs">Aktuelle Mitglieder</label>
+          <div id="members-list" class="flex flex-wrap gap-2"></div>
+        </div>
+        <form method="dialog">
+          <button
+            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+          >
+            ✕
+          </button>
+        </form>
+      </div>
+    </dialog>
   </body>
 </html>
