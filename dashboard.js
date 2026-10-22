@@ -1,81 +1,89 @@
-const STORAGE_KEY = "homeflow-demo-tasks";
+// المفتاح الموحد التابع لصفحة التاسك
+const REAL_TASKS_KEY = "homeflow_tasks";
+const BUDGET_EXPENSES_KEY = "homeflow_expenses";
+const BUDGET_FIXCOSTS_KEY = "homeflow_fixcosts";
 
-const initialTasks = [
-  {
-    title: "Clean the kitchen",
-    category: "Cleaning",
-    person: "Alex",
-    time: "Today, 10:00",
-    done: true,
-  },
-  {
-    title: "Take out the trash",
-    category: "Cleaning",
-    person: "Sam",
-    time: "Today, 18:00",
-    done: true,
-  },
-  {
-    title: "Laundry",
-    category: "Laundry",
-    person: "Jamie",
-    time: "Today, 19:00",
-    done: false,
-  },
-  {
-    title: "Buy groceries",
-    category: "Shopping",
-    person: "Alex",
-    time: "Today, 20:00",
-    done: false,
-  },
-  {
-    title: "Water the plants",
-    category: "Other",
-    person: "Taylor",
-    time: "Tomorrow",
-    done: false,
-  },
-];
-
-const categoryClasses = {
-  Cleaning: "category-cleaning",
-  Laundry: "category-laundry",
-  Shopping: "category-shopping",
-  Other: "category-other",
-};
-
-let tasks = loadTasks();
-let currentFilter = "all";
-
-function isValidTask(task) {
-  return (
-    task !== null &&
-    typeof task === "object" &&
-    typeof task.title === "string" &&
-    typeof task.category === "string" &&
-    typeof task.person === "string" &&
-    typeof task.time === "string" &&
-    typeof task.done === "boolean"
-  );
-}
-
+// دالة لجلب المهام وتحويلها لنسق يتناسب مع الداشبورد
 function loadTasks() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-
-    if (Array.isArray(saved) && saved.every(isValidTask)) {
-      return saved;
+    const saved = localStorage.getItem(REAL_TASKS_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        return parsed.map((t) => ({
+          id: t.id || Date.now().toString(),
+          title: t.title || "Ohne Titel",
+          category: t.category || "Sonstiges",
+          person: t.assignee || t.person || "Alle",
+          time: t.dueDate
+            ? t.dueDate.includes("T")
+              ? t.dueDate.split("T")[0]
+              : t.dueDate
+            : "Heute",
+          done: t.completed !== undefined ? t.completed : t.done || false,
+        }));
+      }
     }
+<<<<<<< Updated upstream
   } catch {}
 
   return initialTasks.map((task) => ({ ...task }));
+=======
+  } catch (e) {
+    console.error("Fehler beim Laden der Aufgaben", e);
+  }
+  return [];
+>>>>>>> Stashed changes
 }
 
-function saveTasks() {
+// دالة لحفظ التعديلات في LocalStorage
+function saveTasksToStorage(tasksList) {
   try {
+<<<<<<< Updated upstream
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
   } catch {}
+=======
+    // تحويلها للنسق الموحد لصفحة التاسك
+    const formattedForTasksPage = tasksList.map((t) => ({
+      id: t.id || Date.now().toString(),
+      title: t.title,
+      category: t.category,
+      assignee: t.person,
+      dueDate: t.time || new Date().toISOString(),
+      completed: t.done,
+    }));
+    localStorage.setItem(REAL_TASKS_KEY, JSON.stringify(formattedForTasksPage));
+  } catch (e) {
+    console.error("Fehler beim Speichern der Aufgaben", e);
+  }
+}
+
+// دالة لتحديث الميزانية تلقائياً في البطاقة العليا بالداشبورد
+function updateBudgetCard() {
+  try {
+    const expenses =
+      JSON.parse(localStorage.getItem(BUDGET_EXPENSES_KEY)) || [];
+    const fixcosts =
+      JSON.parse(localStorage.getItem(BUDGET_FIXCOSTS_KEY)) || [];
+
+    const totalFix = fixcosts.reduce(
+      (sum, item) => sum + (Number(item.amount) || 0),
+      0,
+    );
+    const totalVar = expenses.reduce(
+      (sum, item) => sum + (Number(item.amount) || 0),
+      0,
+    );
+    const overallSpent = totalFix + totalVar;
+
+    const budgetEl = document.querySelector("#budget .text-3xl");
+    if (budgetEl) {
+      budgetEl.textContent = `€${overallSpent.toFixed(0)}`;
+    }
+  } catch (e) {
+    console.error("Fehler beim Laden des Budgets", e);
+  }
+>>>>>>> Stashed changes
 }
 
 function initializeDashboard() {
@@ -118,6 +126,7 @@ function initializeTasks() {
   const navCount = document.getElementById("nav-count");
   const filterButtons = document.querySelectorAll("[data-filter]");
 
+<<<<<<< Updated upstream
   if (!taskList || !taskForm || !taskTitle || !taskCategory || !taskModal) {
     return;
   }
@@ -127,66 +136,78 @@ function initializeTasks() {
 
     if (openCount) openCount.textContent = open;
     if (navCount) navCount.textContent = open;
+=======
+  let tasks = loadTasks();
+  let currentFilter = "all";
+
+  // تحديث عداد المهام المفتوحة المتبقية
+  function updateTaskSummary() {
+    const open = tasks.filter((task) => !task.done).length;
+    if (openCount) openCount.textContent = open;
+    if (navCount) navCount.textContent = open;
+    updateBudgetCard();
+>>>>>>> Stashed changes
   }
 
   function matchesFilter(task) {
     if (currentFilter === "open") return !task.done;
     if (currentFilter === "done") return task.done;
-
     return true;
   }
 
   function createTaskRow(task, index) {
     const row = document.createElement("label");
-    row.className = "task-row";
+    row.className =
+      "task-row flex items-center justify-between p-3 rounded-xl border border-[#293630] bg-[#0b100f] mb-2 cursor-pointer";
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.className = "checkbox checkbox-sm";
+    checkbox.className = "checkbox checkbox-sm checkbox-accent";
     checkbox.checked = task.done;
-    checkbox.setAttribute("aria-label", task.title);
 
     checkbox.addEventListener("change", () => {
       tasks[index].done = checkbox.checked;
-
-      saveTasks();
+      saveTasksToStorage(tasks);
       renderTasks();
     });
 
     const content = document.createElement("div");
-    content.className = "task-content";
+    content.className = "task-content flex-1 ml-3";
 
     const title = document.createElement("p");
-    title.className = "task-name";
+    title.className = `task-name text-sm font-medium ${task.done ? "line-through opacity-40" : "text-[#f1f7f3]"}`;
     title.textContent = task.title;
 
     const meta = document.createElement("p");
-    meta.className = "task-meta";
+    meta.className = "task-meta muted text-xs mt-0.5";
     meta.textContent = `${task.time} · ${task.person}`;
 
     content.append(title, meta);
 
     const badge = document.createElement("span");
+<<<<<<< Updated upstream
 
     const categoryClass =
       categoryClasses[task.category] || categoryClasses.Other;
 
     badge.className = `badge task-badge ${categoryClass}`;
+=======
+    badge.className = "badge badge-sm badge-outline";
+>>>>>>> Stashed changes
     badge.textContent = task.category;
 
     row.append(checkbox, content, badge);
-
     return row;
   }
 
   function renderTasks() {
+    if (!taskList) return;
     taskList.replaceChildren();
 
     let visibleCount = 0;
 
     tasks.forEach((task, index) => {
       if (!matchesFilter(task)) return;
-
       taskList.append(createTaskRow(task, index));
       visibleCount++;
     });
@@ -200,14 +221,11 @@ function initializeTasks() {
 
   function setFilter(filter) {
     currentFilter = filter;
-
     filterButtons.forEach((button) => {
       const isActive = button.dataset.filter === filter;
-
       button.classList.toggle("is-active", isActive);
       button.setAttribute("aria-pressed", String(isActive));
     });
-
     renderTasks();
   }
 
@@ -217,40 +235,63 @@ function initializeTasks() {
     });
   });
 
+<<<<<<< Updated upstream
   taskTitle.addEventListener("input", () => {
     taskTitle.setCustomValidity("");
   });
 
   taskForm.addEventListener("submit", (event) => {
     event.preventDefault();
-
-    const title = taskTitle.value.trim();
-
-    if (!title) {
-      taskTitle.setCustomValidity("Please enter a task.");
-      taskTitle.reportValidity();
-      return;
-    }
-
-    tasks.push({
-      title,
-      category: taskCategory.value,
-      person: "Alex",
-      time: "Today",
-      done: false,
+=======
+  // إدارة النوافذ المنبثقة (Dialogs)
+  document.querySelectorAll("[data-open-dialog]").forEach((trigger) => {
+    trigger.addEventListener("click", (event) => {
+      event.preventDefault();
+      const dialog = document.getElementById(trigger.dataset.openDialog);
+      if (dialog && !dialog.open) {
+        dialog.showModal();
+      }
     });
-
-    saveTasks();
-    setFilter("all");
-
-    taskForm.reset();
-    taskTitle.setCustomValidity("");
-    taskModal.close();
   });
+
+  document.querySelectorAll("[data-close-dialog]").forEach((trigger) => {
+    trigger.addEventListener("click", (event) => {
+      event.preventDefault();
+      const dialog = document.getElementById(trigger.dataset.closeDialog);
+      if (dialog) dialog.close();
+    });
+  });
+
+  // إضافة مهمة جديدة من الداشبورد لتتخزن مباشرة في صفحة Tasks
+  if (taskForm) {
+    taskForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const title = taskTitle.value.trim();
+      if (!title) return;
+
+      const newTask = {
+        id: Date.now().toString(),
+        title: title,
+        category: taskCategory.value,
+        person: "Alex",
+        time: new Date().toISOString().split("T")[0],
+        done: false,
+      };
+>>>>>>> Stashed changes
+
+      tasks.push(newTask);
+      saveTasksToStorage(tasks);
+      setFilter("all");
+
+      taskForm.reset();
+      if (taskModal) taskModal.close();
+    });
+  }
 
   renderTasks();
 }
 
+<<<<<<< Updated upstream
 function restlicheTage(produkt) {
   if (produkt.ablaufdatum) {
     const heute = new Date();
@@ -354,6 +395,8 @@ function zeigeDringendeProdukte() {
   });
 }
 
+=======
+>>>>>>> Stashed changes
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initializeDashboard, {
     once: true,

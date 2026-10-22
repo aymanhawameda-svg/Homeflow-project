@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="de" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HomeFlow - Aufgaben</title>
+    <!-- Tailwind CSS & DaisyUI -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="min-h-screen">
+    <div class="flex min-h-screen">
+      <div id="sidebar-container"></div>
+      <div class="max-w-4xl mx-auto space-y-6">
+        <!-- رأس الصفحة مع زر إضافة مهمة وزر إضافة فرد عائلة -->
+        <div class="my-card flex flex-wrap justify-between items-center gap-4">
+          <div>
+            <h2 class="text-2xl font-bold flex items-center gap-2">
+              <span style="color: var(--home-green)">✓</span> Aufgaben
+            </h2>
+            <p>
+              Verwalten und organisieren Sie Ihre täglichen Haushaltsarbeiten an
+              einem Ort.
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <button
+              onclick="member_modal.showModal()"
+              class="btn-secondary-custom"
+            >
+              👤 + Mitglied
+            </button>
+            <button onclick="openAddModal()" class="btn-custom">
+              + Aufgabe hinzufügen
+            </button>
+          </div>
+        </div>
+
+        <!-- شريط الفلاتر (حسب الوقت وحسب الشخص المسؤول) -->
+        <div
+          class="my-card py-4 flex flex-wrap gap-4 items-center justify-between"
+        >
+          <div class="flex gap-2 items-center">
+            <span class="text-xs font-semibold" style="color: var(--home-muted)"
+              >Zeit-Filter:</span
+            >
+            <button
+              id="filter-all"
+              onclick="setFilterTime('all')"
+              class="btn btn-sm bg-[#173e30] text-[#72e0ad] border-none"
+            >
+              Alle
+            </button>
+            <button
+              id="filter-today"
+              onclick="setFilterTime('today')"
+              class="btn btn-sm btn-ghost text-xs text-gray-400"
+            >
+              Heute
+            </button>
+            <button
+              id="filter-week"
+              onclick="setFilterTime('week')"
+              class="btn btn-sm btn-ghost text-xs text-gray-400"
+            >
+              Diese Woche
+            </button>
+          </div>
+
+          <div class="flex gap-2 items-center">
+            <span class="text-xs font-semibold" style="color: var(--home-muted)"
+              >Person:</span
+            >
+            <select
+              id="filter-person-select"
+              onchange="renderTasks()"
+              class="select select-sm select-bordered bg-[#0b100f] border-[#293630] text-xs"
+            >
+              <option value="all">Alle Personen</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- أقسام المهام -->
+        <div class="space-y-6">
+          <!-- مهام متأخرة Overdue -->
+          <div id="overdue-section" class="hidden my-card border-error/40">
+            <h3
+              class="text-sm font-semibold text-error mb-2 flex items-center gap-1"
+            >
+              Überfällig
+              <span
+                id="overdue-count"
+                class="badge badge-error badge-sm text-white"
+                >0</span
+              >
+            </h3>
+            <div id="overdue-list" class="space-y-2"></div>
+          </div>
+
+          <!-- مهام اليوم Heute -->
+          <div id="today-section" class="my-card">
+            <h3
+              class="text-sm font-semibold mb-3 flex items-center gap-1"
+              style="color: var(--home-text)"
+            >
+              📅 Heute
+              <span
+                id="today-count"
+                class="badge badge-sm"
+                style="
+                  background: var(--home-green-dark);
+                  color: var(--home-green);
+                "
+                >0</span
+              >
+            </h3>
+            <div id="today-list" class="space-y-2"></div>
+          </div>
+
+          <!-- مهام غدًا Morgen -->
+          <div id="tomorrow-section" class="my-card">
+            <h3
+              class="text-sm font-semibold mb-3 flex items-center gap-1"
+              style="color: var(--home-text)"
+            >
+              ⏳ Morgen
+              <span id="tomorrow-count" class="badge badge-sm badge-ghost"
+                >0</span
+              >
+            </h3>
+            <div id="tomorrow-list" class="space-y-2"></div>
+          </div>
+
+          <!-- مهام قادمة Demnächst -->
+          <div id="upcoming-section" class="my-card">
+            <h3
+              class="text-sm font-semibold mb-3 flex items-center gap-1"
+              style="color: var(--home-text)"
+            >
+              🔮 Demnächst (Später)
+              <span id="upcoming-count" class="badge badge-sm badge-ghost"
+                >0</span
+              >
+            </h3>
+            <div id="upcoming-list" class="space-y-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal نافذة إضافة مهمة جديدة أو تعديلها -->
+      <dialog id="task_modal" class="modal">
+        <div
+          class="modal-box"
+          style="
+            background: var(--home-surface);
+            border: 1px solid var(--home-border);
+            color: var(--home-text);
+          "
+        >
+          <h3 id="modal-title" class="font-bold text-lg mb-4">
+            Neue Aufgabe hinzufügen
+          </h3>
+          <form id="add-task-form" class="space-y-4">
+            <div class="form-control">
+              <label class="label"
+                ><span class="label-text" style="color: var(--home-muted)"
+                  >Aufgabenname</span
+                ></label
+              >
+              <input
+                type="text"
+                id="task-title"
+                placeholder="z.B. Küche aufräumen"
+                class="input input-bordered w-full bg-[#0b100f] border-[#293630]"
+                required
+              />
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-control">
+                <label class="label"
+                  ><span class="label-text" style="color: var(--home-muted)"
+                    >Kategorie</span
+                  ></label
+                >
+                <select
+                  id="task-category"
+                  class="select select-bordered w-full bg-[#0b100f] border-[#293630]"
+                >
+                  <option value="Reinigung">Reinigung</option>
+                  <option value="Wäsche">Wäsche</option>
+                  <option value="Einkauf">Einkauf</option>
+                  <option value="Sonstiges">Sonstiges</option>
+                </select>
+              </div>
+
+              <div class="form-control">
+                <label class="label"
+                  ><span class="label-text" style="color: var(--home-muted)"
+                    >Zugewiesen an</span
+                  ></label
+                >
+                <!-- قائمة منسدلة ديناميكية بأسماء العائلة -->
+                <select
+                  id="task-assignee-select"
+                  class="select select-bordered w-full bg-[#0b100f] border-[#293630]"
+                >
+                  <!-- تعبأ تلقائياً بـ JavaScript -->
+                </select>
+              </div>
+            </div>
+
+            <div class="form-control">
+              <label class="label"
+                ><span class="label-text" style="color: var(--home-muted)"
+                  >Fälligkeitsdatum & Uhrzeit</span
+                ></label
+              >
+              <input
+                type="datetime-local"
+                id="task-datetime"
+                class="input input-bordered w-full bg-[#0b100f] border-[#293630]"
+                required
+              />
+            </div>
+
+            <div class="modal-action">
+              <button
+                type="button"
+                onclick="task_modal.close()"
+                class="btn btn-ghost text-gray-400"
+              >
+                Abbrechen
+              </button>
+              <button type="submit" class="btn-custom">Speichern</button>
+            </div>
+          </form>
+        </div>
+      </dialog>
+
+      <!-- Modal نافذة إضافة وتدبير أفراد العائلة -->
+      <dialog id="member_modal" class="modal">
+        <div
+          class="modal-box"
+          style="
+            background: var(--home-surface);
+            border: 1px solid var(--home-border);
+            color: var(--home-text);
+          "
+        >
+          <h3 class="font-bold text-lg mb-4">Familienmitglied hinzufügen</h3>
+          <form id="add-member-form" class="space-y-4">
+            <div class="form-control">
+              <label class="label"
+                ><span class="label-text" style="color: var(--home-muted)"
+                  >Name des Mitglieds</span
+                ></label
+              >
+              <input
+                type="text"
+                id="member-name"
+                placeholder="z.B. Alex oder Sarah"
+                class="input input-bordered w-full bg-[#0b100f] border-[#293630]"
+                required
+              />
+            </div>
+
+            <div class="modal-action">
+              <button
+                type="button"
+                onclick="member_modal.close()"
+                class="btn btn-ghost text-gray-400"
+              >
+                Schließen
+              </button>
+              <button type="submit" class="btn-custom">Hinzufügen</button>
+            </div>
+          </form>
+
+          <!-- قائمة أفراد العائلة المضافين حالياً -->
+          <div class="mt-6 border-t border-[#293630] pt-4">
+            <h4
+              class="text-xs font-semibold mb-2"
+              style="color: var(--home-muted)"
+            >
+              Aktuelle Mitglieder:
+            </h4>
+            <div id="members-list" class="flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+      </dialog>
+    </div>
+
+    <!-- ربط ملف الجافاسكريبت -->
+    <script src="tasks.js"></script>
+    <script>
+      fetch("sidebar.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("sidebar-container").innerHTML = data;
+          // تحديث زر الصفحة النشطة تلقائياً
+          const currentPath = window.location.pathname.split("/").pop();
+          document.querySelectorAll(".nav-item").forEach((link) => {
+            if (link.getAttribute("href") === currentPath) {
+              link.classList.add("bg-[#173e30]", "text-[#72e0ad]");
+            }
+          });
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,97 @@
+:root {
+  --home-bg: #0b100f;
+  --home-surface: #131a18;
+  --home-card: #19221f;
+  --home-border: #293630;
+  --home-green: #72e0ad;
+  --home-green-dark: #173e30;
+  --home-text: #f1f7f3;
+  --home-muted: #8d9d94;
+  --home-radius: 22px;
+}
+
+html {
+  min-height: 100%;
+  background: var(--home-bg);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 24px;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: var(--home-text);
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(44, 111, 78, 0.18),
+      transparent 55%
+    ),
+    var(--home-bg);
+}
+
+/* الكروت والتصميم الأساسي */
+.my-card {
+  color: var(--home-text);
+  background: var(--home-surface);
+  border: 1px solid var(--home-border);
+  border-radius: var(--home-radius);
+  padding: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.my-card:hover {
+  background: var(--home-card);
+  border-color: #3d5b49;
+}
+
+.my-card h2 {
+  color: var(--home-text);
+  font-weight: 650;
+  letter-spacing: -0.04em;
+}
+
+.my-card p {
+  color: var(--home-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* الأزرار المخصصة */
+.btn-custom {
+  padding: 10px 16px;
+  color: #092116;
+  font-size: 13px;
+  font-weight: 750;
+  background: var(--home-green);
+  border: 1px solid transparent;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-custom:hover {
+  background: #96edc0;
+  transform: translateY(-2px);
+}
+
+.btn-secondary-custom {
+  padding: 10px 16px;
+  color: var(--home-text);
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--home-green-dark);
+  border: 1px solid var(--home-border);
+  border-radius: 13px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-secondary-custom:hover {
+  background: #215441;
+  transform: translateY(-2px);
+}
