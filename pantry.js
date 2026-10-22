@@ -89,13 +89,29 @@ const produkte = JSON.parse(localStorage.getItem("produkte")) || [
   },
 ];
 
+// Элементы страницы.
+const container = document.querySelector("#produkteContainer");
+const open_add = document.querySelector("#open-add");
+const produkt_form = document.querySelector("#produktForm");
+
+const produktNameInput = document.querySelector("#produktName");
+const produktMengeInput = document.querySelector("#produktMenge");
+const produktKategorieInput = document.querySelector("#produktKategorie");
+
+const kalender = document.querySelector("#calendar");
+const kalenderButton = document.querySelector("#cally1");
+const datumInput = document.querySelector("#produktDatum");
+
+const filterButtons = document.querySelectorAll(".pantry-filter");
+
+let aktiveKategorie = "Alle";
+
+// Сохранение продуктов.
 function speichereProdukte() {
   localStorage.setItem("produkte", JSON.stringify(produkte));
 }
 
-speichereProdukte();
-const container = document.querySelector("#produkteContainer");
-
+// Расчёт оставшихся дней.
 function berechneRestlaufzeit(datum) {
   if (!datum) return null;
 
@@ -105,59 +121,55 @@ function berechneRestlaufzeit(datum) {
   const ablaufdatum = new Date(datum + "T00:00:00");
   ablaufdatum.setHours(0, 0, 0, 0);
 
-  return Math.round((ablaufdatum - heute) / (1000 * 60 * 60 * 24));
+  return Math.round((ablaufdatum - heute) / 86400000);
 }
 
-function zeigeProdukte(liste = produkte) {
-  liste.sort(
-    (a, b) =>
-      (a.ablaufdatum ? berechneRestlaufzeit(a.ablaufdatum) : a.restlaufzeit) -
-      (b.ablaufdatum ? berechneRestlaufzeit(b.ablaufdatum) : b.restlaufzeit),
-  );
+function resttage(produkt) {
+  if (produkt.ablaufdatum) {
+    return berechneRestlaufzeit(produkt.ablaufdatum);
+  }
+
+  return produkt.restlaufzeit;
+}
+
+// Отображение продуктов выбранной категории.
+function zeigeProdukte() {
+  const liste =
+    aktiveKategorie === "Alle"
+      ? [...produkte]
+      : produkte.filter((produkt) => produkt.kategorie === aktiveKategorie);
+
+  liste.sort((a, b) => resttage(a) - resttage(b));
+
   container.innerHTML = "";
 
   liste.forEach((produkt) => {
-    const restlaufzeit = produkt.ablaufdatum
-      ? berechneRestlaufzeit(produkt.ablaufdatum)
-      : produkt.restlaufzeit;
+    const restlaufzeit = resttage(produkt);
 
     const restlaufzeitText =
-      restlaufzeit < 0 ? "Abgelaufen" : `${restlaufzeit} Tage`;
+      restlaufzeit < 0
+        ? "Abgelaufen"
+        : `${restlaufzeit} ${restlaufzeit === 1 ? "Tag" : "Tage"}`;
 
     const karte = document.createElement("article");
-
     karte.className = "card bg-base-100 shadow-md border border-base-200";
 
     karte.innerHTML = `
       <figure class="px-3 pt-3">
-        <img
-          src="${produkt.image}"
-          alt="${produkt.name}"
-          class="h-30 w-full object-contain rounded-xl"
-        />
+        <img class="h-30 w-full object-contain rounded-xl" />
       </figure>
 
       <div class="card-body p-4 gap-2">
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+          <h2 class="card-title text-base"></h2>
 
-      <div class="flex items-center justify-between gap-45">
-        <h2 class="card-title text-base">
-          ${produkt.name}
-        </h2>
+          <span class="badge badge-outline restlaufzeit-badge"></span>
+        </div>
 
-        
-          <span class="badge badge-outline  restlaufzeit-badge">
-            ${restlaufzeitText}
-          </span>
+        <div class="produkt-actions">
+          <span class="badge badge-outline menge-badge"></span>
 
-          </div>
-
-          <div class="flex flex-wrap gap-4">
-
-          <div class="flex items-center gap-4 flex-wrap">
-            <span class="badge ${produkt.badgeClass} menge-badge">
-              Menge: ${produkt.menge}
-            </span>
-
+          <div class="produkt-buttons">
             <button
               type="button"
               class="btn btn-ghost btn-xs edit-menge-btn"
@@ -180,9 +192,24 @@ function zeigeProdukte(liste = produkte) {
       </div>
     `;
 
-    container.appendChild(karte);
-
+    const bild = karte.querySelector("img");
+    const titel = karte.querySelector(".card-title");
     const badge = karte.querySelector(".restlaufzeit-badge");
+    const mengeBadge = karte.querySelector(".menge-badge");
+    const editButton = karte.querySelector(".edit-menge-btn");
+    const deleteButton = karte.querySelector(".delete-produkt-btn");
+
+    titel.textContent = produkt.name;
+    mengeBadge.textContent = `Menge: ${produkt.menge}`;
+    badge.textContent = restlaufzeitText;
+
+    bild.alt = produkt.name;
+
+    if (produkt.image) {
+      bild.src = produkt.image;
+    } else {
+      bild.hidden = true;
+    }
 
     if (restlaufzeit <= 2) {
       badge.classList.add("danger");
@@ -192,20 +219,23 @@ function zeigeProdukte(liste = produkte) {
       badge.classList.add("ok");
     }
 
-    const mengeBadge = karte.querySelector(".menge-badge");
-    const editButton = karte.querySelector(".edit-menge-btn");
-    const deleteButton = karte.querySelector(".delete-produkt-btn");
+    container.appendChild(karte);
 
+    // Изменение количества.
     editButton.addEventListener("click", () => {
-      const input = document.createElement("input");
+      editButton.disabled = true;
 
+      const input = document.createElement("input");
       input.type = "text";
       input.value = produkt.menge;
+      input.maxLength = 40;
       input.className = "input input-bordered input-sm";
       input.style.width = "110px";
+      input.style.minWidth = "0";
       input.style.backgroundColor = "#ffffff";
       input.style.color = "#222222";
       input.style.border = "1px solid #999999";
+      input.setAttribute("aria-label", "Menge");
 
       mengeBadge.replaceWith(input);
 
@@ -216,22 +246,22 @@ function zeigeProdukte(liste = produkte) {
       saveButton.setAttribute("aria-label", "Speichern");
 
       input.after(saveButton);
-
       input.focus();
       input.select();
 
-      const speichern = () => {
+      function speichern() {
         const neueMenge = input.value.trim();
 
-        if (neueMenge === "") {
+        if (!neueMenge) {
           input.focus();
           return;
         }
 
         produkt.menge = neueMenge;
+
         speichereProdukte();
         zeigeProdukte();
-      };
+      }
 
       saveButton.addEventListener("click", speichern);
 
@@ -239,85 +269,99 @@ function zeigeProdukte(liste = produkte) {
         if (event.key === "Enter") {
           speichern();
         }
+
+        if (event.key === "Escape") {
+          zeigeProdukte();
+        }
       });
     });
 
+    // Удаление продукта.
     deleteButton.addEventListener("click", () => {
       const index = produkte.indexOf(produkt);
 
       if (index !== -1) {
         produkte.splice(index, 1);
       }
-      speichereProdukte();
 
+      speichereProdukte();
       zeigeProdukte();
     });
   });
 }
 
-zeigeProdukte();
-
-const open_add = document.querySelector("#open-add");
-const produkt_form = document.querySelector("#produktForm");
-
+// Открытие и закрытие формы.
 open_add.addEventListener("click", () => {
   produkt_form.classList.toggle("hidden");
 });
 
-// Kalender
-const kalender = document.querySelector("#calendar");
-const kalenderButton = document.querySelector("#cally1");
-const datumInput = document.querySelector("#produktDatum");
-
+// Выбор даты.
 if (kalender && kalenderButton && datumInput) {
   kalender.addEventListener("change", () => {
-    const datum = kalender.value;
+    if (!kalender.value) return;
 
-    if (!datum) return;
-
-    kalenderButton.textContent = datum;
-    kalenderButton.style.color = "#222";
-    datumInput.value = datum;
+    datumInput.value = kalender.value;
+    kalenderButton.textContent = kalender.value;
   });
-} else {
-  console.error("Fehlendes HTML-Element für den Kalender!");
 }
 
-const produktNameInput = document.querySelector("#produktName");
-const produktMengeInput = document.querySelector("#produktMenge");
-const produktKategorieInput = document.querySelector("#produktKategorie");
+// Подсказки количества и изображения.
+function produktDetails(name) {
+  if (name.includes("walnüsse") || name.includes("walnuss")) {
+    return ["500 g", "images/walnüsse.jpg"];
+  }
+
+  if (name.includes("pizza")) {
+    return ["1 Stück", "images/pizza.jpg"];
+  }
+
+  if (name.includes("milch")) {
+    return ["1 Liter", "images/milch.jpg"];
+  }
+
+  if (name.includes("orange")) {
+    return ["1 kg", "images/orangen.jpg"];
+  }
+
+  if (name.includes("eier")) {
+    return ["10 Stück", "images/eier.jpg"];
+  }
+
+  if (name.includes("käse")) {
+    return ["250 g", "images/käse.jpg"];
+  }
+
+  if (name.includes("nudeln")) {
+    return ["500 g", "images/nudelln.jpg"];
+  }
+
+  if (name.includes("reis")) {
+    return ["1 kg", "images/rice.jpg"];
+  }
+
+  if (name.includes("tomaten")) {
+    return ["1 kg", "images/tomaten.jpg"];
+  }
+
+  if (name.includes("salat")) {
+    return ["1 Stück", "images/salat.jpg"];
+  }
+
+  if (name.includes("mangoeis")) {
+    return ["1 Liter", "images/mango eis.jpg"];
+  }
+
+  return ["1 Stück", ""];
+}
 
 produktNameInput.addEventListener("input", () => {
   const name = produktNameInput.value.toLowerCase();
 
-  if (name.includes("walnüsse") || name.includes("walnuss")) {
-    produktMengeInput.value = "500 g";
-  } else if (name.includes("pizza")) {
-    produktMengeInput.value = "1 Stück";
-  } else if (name.includes("milch")) {
-    produktMengeInput.value = "1 Liter";
-  } else if (name.includes("orangen") || name.includes("orange")) {
-    produktMengeInput.value = "1 kg";
-  } else if (name.includes("eier")) {
-    produktMengeInput.value = "10 Stück";
-  } else if (name.includes("käse")) {
-    produktMengeInput.value = "250 g";
-  } else if (name.includes("nudeln")) {
-    produktMengeInput.value = "500 g";
-  } else if (name.includes("reis")) {
-    produktMengeInput.value = "1 kg";
-  } else if (name.includes("tomaten")) {
-    produktMengeInput.value = "1 kg";
-  } else if (name.includes("salat")) {
-    produktMengeInput.value = "1 Stück";
-  } else if (name.includes("mangoeis")) {
-    produktMengeInput.value = "1 Liter";
-  } else {
-    produktMengeInput.value = "1 Stück";
-  }
+  produktMengeInput.value = produktDetails(name)[0];
 });
 
-document.querySelector("#produktHinzufuegen").addEventListener("click", () => {
+// Добавление продукта.
+function produktHinzufuegen() {
   const name = produktNameInput.value.trim();
   const menge = produktMengeInput.value.trim();
   const datum = datumInput.value;
@@ -338,82 +382,52 @@ document.querySelector("#produktHinzufuegen").addEventListener("click", () => {
     return;
   }
 
-  const nameKlein = name.toLowerCase();
-  let image = "";
-
-  if (nameKlein.includes("walnuss")) {
-    image = "images/walnüsse.jpg";
-  } else if (nameKlein.includes("pizza")) {
-    image = "images/pizza.jpg";
-  } else if (nameKlein.includes("milch")) {
-    image = "images/milch.jpg";
-  } else if (nameKlein.includes("orange")) {
-    image = "images/orangen.jpg";
-  } else if (nameKlein.includes("eier")) {
-    image = "images/eier.jpg";
-  } else if (nameKlein.includes("käse")) {
-    image = "images/käse.jpg";
-  } else if (nameKlein.includes("nudeln")) {
-    image = "images/nudelln.jpg";
-  } else if (nameKlein.includes("reis")) {
-    image = "images/rice.jpg";
-  } else if (nameKlein.includes("tomaten")) {
-    image = "images/tomaten.jpg";
-  } else if (nameKlein.includes("salat")) {
-    image = "images/salat.jpg";
-  } else if (nameKlein.includes("mangoeis")) {
-    image = "images/mango eis.jpg";
-  }
-
   produkte.push({
     name: name,
-    image: image,
+    image: produktDetails(name.toLowerCase())[1],
     ablaufdatum: datum,
     restlaufzeit: berechneRestlaufzeit(datum),
     menge: menge,
     badgeClass: "badge-outline",
     kategorie: kategorie,
   });
+
   speichereProdukte();
-
-  const aktiverFilter = document.querySelector(".filter-btn.active");
-  const kategorieFilter = aktiverFilter
-    ? aktiverFilter.textContent.trim()
-    : "Alle";
-
-  if (kategorieFilter === "Alle") {
-    zeigeProdukte();
-  } else {
-    zeigeProdukte(
-      produkte.filter((produkt) => produkt.kategorie === kategorieFilter),
-    );
-  }
+  zeigeProdukte();
 
   produkt_form.reset();
   datumInput.value = "";
-  kalender.value = "";
+
+  if (kalender) {
+    kalender.value = "";
+  }
+
   kalenderButton.textContent = "Ablaufdatum";
-  kalenderButton.style.color = "";
   produkt_form.classList.add("hidden");
+}
+
+document
+  .querySelector("#produktHinzufuegen")
+  .addEventListener("click", produktHinzufuegen);
+
+produkt_form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  produktHinzufuegen();
 });
 
-const filterButtons = document.querySelectorAll(".filter-btn");
-
+// Фильтры Pantry.
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    filterButtons.forEach((btn) => btn.classList.remove("active"));
-    button.classList.add("active");
+    filterButtons.forEach((btn) => {
+      btn.classList.toggle("active", btn === button);
+    });
 
-    const kategorie = button.textContent.trim();
+    aktiveKategorie = button.textContent.trim();
 
-    if (kategorie === "Alle") {
-      zeigeProdukte();
-    } else {
-      const gefilterteProdukte = produkte.filter(
-        (produkt) => produkt.kategorie === kategorie,
-      );
-
-      zeigeProdukte(gefilterteProdukte);
-    }
+    zeigeProdukte();
   });
 });
+
+// Первое отображение.
+speichereProdukte();
+zeigeProdukte();

@@ -67,9 +67,7 @@ function loadTasks() {
     if (Array.isArray(saved) && saved.every(isValidTask)) {
       return saved;
     }
-  } catch {
-    // Use default tasks if local storage is unavailable.
-  }
+  } catch {}
 
   return initialTasks.map((task) => ({ ...task }));
 }
@@ -77,12 +75,39 @@ function loadTasks() {
 function saveTasks() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-  } catch {
-    // Changes still work within the current session.
-  }
+  } catch {}
 }
 
 function initializeDashboard() {
+  document.querySelectorAll("[data-open-dialog]").forEach((trigger) => {
+    trigger.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      const dialog = document.getElementById(trigger.dataset.openDialog);
+
+      if (dialog && !dialog.open) {
+        dialog.showModal();
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-close-dialog]").forEach((trigger) => {
+    trigger.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      const dialog = document.getElementById(trigger.dataset.closeDialog);
+
+      if (dialog) {
+        dialog.close();
+      }
+    });
+  });
+
+  initializeTasks();
+  zeigeDringendeProdukte();
+}
+
+function initializeTasks() {
   const taskList = document.getElementById("task-list");
   const taskForm = document.getElementById("task-form");
   const taskTitle = document.getElementById("task-title");
@@ -93,11 +118,15 @@ function initializeDashboard() {
   const navCount = document.getElementById("nav-count");
   const filterButtons = document.querySelectorAll("[data-filter]");
 
+  if (!taskList || !taskForm || !taskTitle || !taskCategory || !taskModal) {
+    return;
+  }
+
   function updateTaskSummary() {
     const open = tasks.filter((task) => !task.done).length;
 
-    openCount.textContent = open;
-    navCount.textContent = open;
+    if (openCount) openCount.textContent = open;
+    if (navCount) navCount.textContent = open;
   }
 
   function matchesFilter(task) {
@@ -138,6 +167,7 @@ function initializeDashboard() {
     content.append(title, meta);
 
     const badge = document.createElement("span");
+
     const categoryClass =
       categoryClasses[task.category] || categoryClasses.Other;
 
@@ -161,7 +191,9 @@ function initializeDashboard() {
       visibleCount++;
     });
 
-    emptyMessage.classList.toggle("hidden", visibleCount > 0);
+    if (emptyMessage) {
+      emptyMessage.classList.toggle("hidden", visibleCount > 0);
+    }
 
     updateTaskSummary();
   }
@@ -179,45 +211,16 @@ function initializeDashboard() {
     renderTasks();
   }
 
-  // Filter tasks.
   filterButtons.forEach((button) => {
     button.addEventListener("click", () => {
       setFilter(button.dataset.filter);
     });
   });
 
-  // Open dialogs from buttons and links.
-  document.querySelectorAll("[data-open-dialog]").forEach((trigger) => {
-    trigger.addEventListener("click", (event) => {
-      event.preventDefault();
-
-      const dialog = document.getElementById(trigger.dataset.openDialog);
-
-      if (dialog && !dialog.open) {
-        dialog.showModal();
-      }
-    });
-  });
-
-  // Close dialogs.
-  document.querySelectorAll("[data-close-dialog]").forEach((trigger) => {
-    trigger.addEventListener("click", (event) => {
-      event.preventDefault();
-
-      const dialog = document.getElementById(trigger.dataset.closeDialog);
-
-      if (dialog) {
-        dialog.close();
-      }
-    });
-  });
-
-  // Clear validation when typing.
   taskTitle.addEventListener("input", () => {
     taskTitle.setCustomValidity("");
   });
 
-  // Add a task.
   taskForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
@@ -248,7 +251,109 @@ function initializeDashboard() {
   renderTasks();
 }
 
-// Works with defer or when loaded before the HTML is ready.
+function restlicheTage(produkt) {
+  if (produkt.ablaufdatum) {
+    const heute = new Date();
+    heute.setHours(0, 0, 0, 0);
+
+    const datum = new Date(produkt.ablaufdatum + "T00:00:00");
+
+    return Math.round((datum - heute) / 86400000);
+  }
+
+  if (
+    produkt.restlaufzeit === null ||
+    produkt.restlaufzeit === undefined ||
+    produkt.restlaufzeit === ""
+  ) {
+    return NaN;
+  }
+
+  return Number(produkt.restlaufzeit);
+}
+
+function zeigeDringendeProdukte() {
+  const container = document.getElementById("dringendeProdukteContainer");
+
+  const hinweis = document.getElementById("keineDringendenProdukte");
+
+  if (!container || !hinweis) return;
+
+  let produkte = [];
+
+  try {
+    const gespeichert = JSON.parse(localStorage.getItem("produkte"));
+
+    if (Array.isArray(gespeichert)) {
+      produkte = gespeichert;
+    }
+  } catch {}
+
+  const dringend = produkte
+    .filter((produkt) => produkt && typeof produkt === "object")
+    .filter((produkt) => restlicheTage(produkt) <= 6)
+    .sort((a, b) => restlicheTage(a) - restlicheTage(b));
+
+  container.replaceChildren();
+  hinweis.classList.toggle("hidden", dringend.length > 0);
+
+  dringend.forEach((produkt) => {
+    const tage = restlicheTage(produkt);
+    const karte = document.createElement("article");
+
+    karte.className = "card";
+
+    karte.innerHTML = `
+      <figure>
+        <img loading="lazy">
+      </figure>
+
+      <div class="card-body">
+        <h3 class="card-title"></h3>
+        <p class="produkt-menge"></p>
+      </div>
+
+      <span class="badge restlaufzeit-badge"></span>
+    `;
+
+    const bild = karte.querySelector("img");
+    const figure = karte.querySelector("figure");
+    const titel = karte.querySelector(".card-title");
+    const menge = karte.querySelector(".produkt-menge");
+    const badge = karte.querySelector(".restlaufzeit-badge");
+
+    titel.textContent = produkt.name || "Produkt";
+    menge.textContent = produkt.menge || "—";
+
+    badge.classList.add(tage <= 2 ? "danger" : "warning");
+
+    if (tage < 0) {
+      badge.textContent = "Abgelaufen";
+    } else if (tage === 0) {
+      badge.textContent = "Heute";
+    } else {
+      badge.textContent = `${tage} ${tage === 1 ? "Tag" : "Tage"}`;
+    }
+
+    bild.alt = "";
+
+    function zeigePlatzhalter() {
+      figure.replaceChildren();
+      figure.textContent = "🌿";
+    }
+
+    bild.addEventListener("error", zeigePlatzhalter);
+
+    if (produkt.image) {
+      bild.src = produkt.image;
+    } else {
+      zeigePlatzhalter();
+    }
+
+    container.append(karte);
+  });
+}
+
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initializeDashboard, {
     once: true,
@@ -256,3 +361,12 @@ if (document.readyState === "loading") {
 } else {
   initializeDashboard();
 }
+
+window.addEventListener("pageshow", zeigeDringendeProdukte);
+window.addEventListener("focus", zeigeDringendeProdukte);
+
+window.addEventListener("storage", (event) => {
+  if (event.key === "produkte" || event.key === null) {
+    zeigeDringendeProdukte();
+  }
+});
