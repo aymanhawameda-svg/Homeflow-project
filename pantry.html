@@ -3,172 +3,228 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>HomeFlow — Shopping List</title>
-
-    <!-- Сначала DaisyUI и Tailwind -->
+    <title>HomeFlow — Vorräte</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script type="module" src="https://unpkg.com/cally"></script>
-
-    <!-- Стили HomeFlow -->
-    <link rel="stylesheet" href="pantry.css" />
-
+    <link rel="stylesheet" href="style.css" />
     <script src="pantry.js" defer></script>
   </head>
-
   <body>
-    <main class="pantry">
-      <section class="shopping-card card bg-base-100 rounded-3xl">
-        <div class="card-body p-5 sm:p-8 gap-6">
-          <!-- Header -->
-          <header class="w-full">
-            <div class="shopping-header-row">
-              <!-- Левая часть -->
-              <div class="flex items-center gap-30 min-w-0">
-                <button
-                  type="button"
-                  class="text-slate-700 hover:text-emerald-700 text-3xl font-bold transition-colors shrink-0"
-                  aria-label="Go back"
-                >
-                  ←
-                </button>
-
-                <div>
-                  <h1 class="text-2xl sm:text-3xl font-bold">Vorrat</h1>
-                </div>
-              </div>
-
-              <!-- Правая часть -->
-
-              <button
-                id="open-add"
-                type="button"
-                class="btn btn-home rounded-xl px-4 shrink-0"
-              >
-                <span aria-hidden="true">＋</span>
-                Hinzufügen
-              </button>
-
-              <div class="flex gap-4">
-                <span class="badge badge-success">✓ Alles gut</span>
-                <span class="badge badge-warning">◷ Bald fällig</span>
-                <span class="badge badge-error">⚠ Dringend</span>
-              </div>
-            </div>
-
-            <form
-              id="produktForm"
-              class="hidden grid grid-cols-1 sm:grid-cols-[1fr_110px_auto] gap-2 w-full max-w-lg mx-auto"
+    <svg xmlns="http://www.w3.org/2000/svg" class="hidden" aria-hidden="true">
+      <symbol id="home" viewBox="0 0 24 24">
+        <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-8H9v8H4a1 1 0 0 1-1-1z" />
+      </symbol>
+      <symbol id="check" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <path d="m8 12 3 3 5-6" />
+      </symbol>
+      <symbol id="cart" viewBox="0 0 24 24">
+        <path d="M2 3h3l3 13h11l3-9H6" />
+        <circle cx="9" cy="21" r="1" />
+        <circle cx="19" cy="21" r="1" />
+      </symbol>
+      <symbol id="leaf" viewBox="0 0 24 24">
+        <path d="M20 3c-9-1-15 3-15 9a6 6 0 0 0 6 6c6 0 9-6 9-15Z" />
+        <path d="M4 21 15 10" />
+      </symbol>
+      <symbol id="wallet" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="15" rx="3" />
+        <path d="M4 5V4a2 2 0 0 1 2-2h12v3M16 11h5v5h-5a2 2 0 0 1 0-5Z" />
+      </symbol>
+      <symbol id="users" viewBox="0 0 24 24">
+        <circle cx="9" cy="7" r="3" />
+        <path
+          d="M3 21v-3a6 6 0 0 1 12 0v3M16 4a3 3 0 0 1 0 6M18 15a5 5 0 0 1 3 5"
+        />
+      </symbol>
+    </svg>
+    <div class="layout">
+      <aside class="sidebar p-5 lg:p-6">
+        <a href="#overview" class="flex items-center gap-3 px-2">
+          <span class="icon logo-icon"
+            ><svg><use href="#home" /></svg
+          ></span>
+          <div>
+            <div class="text-xl font-bold tracking-tight">Zuhause</div>
+            <div class="muted text-xs">Ein bisschen weniger Alltagstrubel.</div>
+          </div>
+        </a>
+        <div class="sidebar-label mt-9 hidden px-4 lg:block"></div>
+        <nav
+          class="mt-4 flex gap-2 overflow-x-auto lg:flex-col"
+          aria-label="Main navigation"
+        >
+          <a href="./dashboard.html" class="nav-item active">
+            <span class="icon"
+              ><svg><use href="#home" /></svg></span
+            >Übersicht
+          </a>
+          <a href="#tasks" class="nav-item">
+            <span class="icon"
+              ><svg><use href="#check" /></svg></span
+            >Aufgaben
+            <span id="nav-count" class="badge badge-sm nav-count ml-auto"
+              >3</span
             >
-              <input
-                type="text"
-                id="produktName"
-                class="input input-bordered w-full rounded-xl"
-                placeholder="Titel einfügen"
-                required
-                maxlength="100"
-              />
-
-              <input
-                type="text"
-                id="produktMenge"
-                class="input input-bordered w-full rounded-xl"
-                placeholder="Menge"
-                maxlength="40"
-              />
-
-              <select
-                id="produktKategorie"
-                class="select select-bordered w-full rounded-xl"
-                required
+          </a>
+          <a href="./newstyle.html" class="nav-item whitespace-nowrap">
+            <span class="icon"
+              ><svg><use href="#cart" /></svg></span
+            >Einkaufsliste
+          </a>
+          <a href="./pantry.html" class="nav-item">
+            <span class="icon"
+              ><svg><use href="#leaf" /></svg></span
+            >Vorräte
+          </a>
+          <a href="#budget" class="nav-item">
+            <span class="icon"
+              ><svg><use href="#wallet" /></svg></span
+            >Budget
+          </a>
+          <a href="#household" class="nav-item">
+            <span class="icon"
+              ><svg><use href="#users" /></svg></span
+            >Haushalt
+          </a>
+        </nav>
+        <div id="household" class="mt-8 hidden items-center gap-3 px-2 lg:flex">
+          <div class="profile-avatar">A</div>
+          <div><p class="text-sm font-medium">Ayman Altman</p></div>
+        </div>
+      </aside>
+      <main class="pantry">
+        <section class="pantry-card card bg-base-100 rounded-3xl">
+          <div class="card-body p-5 sm:p-8 gap-6">
+            <header class="w-full">
+              <div class="pantry-header">
+                <div class="flex items-center gap-30 min-w-0">
+                  <a
+                    href="./dashboard.html"
+                    class="text-2xl font-bold"
+                    style="color: var(--home-text)"
+                    aria-label="Zurück"
+                    >←</a
+                  >
+                  <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold">Vorräte</h1>
+                  </div>
+                </div>
+                <button
+                  id="open-add"
+                  type="button"
+                  class="btn btn-home rounded-xl px-4 shrink-0"
+                >
+                  <span aria-hidden="true">＋</span>Hinzufügen
+                </button>
+              </div>
+              <form
+                id="produktForm"
+                class="hidden grid grid-cols-1 sm:grid-cols-[1fr_110px_auto] gap-2 w-full max-w-lg mx-auto"
               >
-                <option disabled selected value="">Kategorie</option>
-                <option value="Kühlschrank">Kühlschrank</option>
-                <option value="Gefrierfach">Gefrierfach</option>
-                <option value="Vorrat">Vorrat</option>
-              </select>
-
-              <!-- Kalender -->
-              <div class="w-full sm:col-span-3">
+                <input
+                  type="text"
+                  id="produktName"
+                  class="input input-bordered w-full rounded-xl"
+                  placeholder="Titel einfügen"
+                  required
+                  maxlength="100"
+                />
+                <input
+                  type="text"
+                  id="produktMenge"
+                  class="input input-bordered w-full rounded-xl"
+                  placeholder="Menge"
+                  maxlength="40"
+                />
+                <select
+                  id="produktKategorie"
+                  class="select select-bordered w-full rounded-xl"
+                  required
+                >
+                  <option disabled selected value="">Kategorie</option>
+                  <option value="Kühlschrank">Kühlschrank</option>
+                  <option value="Gefrierfach">Gefrierfach</option>
+                  <option value="Vorrat">Vorrat</option>
+                </select>
+                <div class="w-full sm:col-span-3">
+                  <button
+                    type="button"
+                    id="cally1"
+                    popovertarget="cally-popover1"
+                    class="input input-bordered w-full rounded-xl text-left"
+                    style="anchor-name: --cally1"
+                  >
+                    Ablaufdatum
+                  </button>
+                  <input type="hidden" id="produktDatum" />
+                  <div
+                    popover
+                    id="cally-popover1"
+                    class="dropdown bg-base-100 rounded-box shadow-lg"
+                    style="position-anchor: --cally1"
+                  >
+                    <calendar-date
+                      id="calendar"
+                      class="cally bg-base-100 border border-base-300 shadow-lg rounded-box"
+                    >
+                      <svg
+                        aria-label="Previous"
+                        class="fill-current size-4"
+                        slot="previous"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="currentColor"
+                          d="M15.75 19.5 8.25 12l7.5-7.5"
+                        ></path>
+                      </svg>
+                      <svg
+                        aria-label="Next"
+                        class="fill-current size-4"
+                        slot="next"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="currentColor"
+                          d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                        ></path>
+                      </svg>
+                      <calendar-month></calendar-month>
+                    </calendar-date>
+                  </div>
+                </div>
                 <button
                   type="button"
-                  id="cally1"
-                  popovertarget="cally-popover1"
-                  class="input input-bordered w-full rounded-xl text-left"
-                  style="anchor-name: --cally1"
+                  id="produktHinzufuegen"
+                  class="btn btn-home w-[150px] px-1 rounded-xl justify-self-center sm:col-span-3"
                 >
-                  Ablaufdatum
+                  Hinzufügen
                 </button>
-
-                <input type="hidden" id="produktDatum" />
-
-                <div
-                  popover
-                  id="cally-popover1"
-                  class="dropdown bg-base-100 rounded-box shadow-lg"
-                  style="position-anchor: --cally1"
-                >
-                  <calendar-date
-                    id="calendar"
-                    class="cally bg-base-100 border border-base-300 shadow-lg rounded-box"
-                  >
-                    <svg
-                      aria-label="Previous"
-                      class="fill-current size-4"
-                      slot="previous"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="M15.75 19.5 8.25 12l7.5-7.5"
-                      ></path>
-                    </svg>
-
-                    <svg
-                      aria-label="Next"
-                      class="fill-current size-4"
-                      slot="next"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="m8.25 4.5 7.5 7.5-7.5 7.5"
-                      ></path>
-                    </svg>
-
-                    <calendar-month></calendar-month>
-                  </calendar-date>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                id="produktHinzufuegen"
-                class="btn btn-home w-[150px] px-1 rounded-xl justify-self-center sm:col-span-3"
-              >
-                Hinzufügen
-              </button>
-            </form>
-          </header>
-
-          <!-- Фильтры -->
-          <nav class="pantry-filters">
-            <button class="filter-btn active">Alle</button>
-            <button class="filter-btn">Kühlschrank</button>
-            <button class="filter-btn">Gefrierfach</button>
-            <button class="filter-btn">Vorrat</button>
-          </nav>
-
-          <!-- Сетка продуктов -->
-          <section
-            id="produkteContainer"
-            class="grid grid-cols-2 gap-4 sm:grid-cols-3"
-          ></section>
-        </div>
-      </section>
-    </main>
+              </form>
+            </header>
+            <div class="pantry-legend">
+              <span class="legend-label">Haltbarkeit:</span>
+              <span class="badge badge-success">✓ Alles gut</span>
+              <span class="badge badge-warning">◷ Bald fällig</span>
+              <span class="badge badge-error">⚠ Dringend</span>
+            </div>
+            <nav class="pantry-filters">
+              <button type="button" class="pantry-filter active">Alle</button>
+              <button type="button" class="pantry-filter">Kühlschrank</button>
+              <button type="button" class="pantry-filter">Gefrierfach</button>
+              <button type="button" class="pantry-filter">Vorrat</button>
+            </nav>
+            <section
+              id="produkteContainer"
+              class="grid grid-cols-2 gap-4 sm:grid-cols-3"
+            ></section>
+          </div>
+        </section>
+      </main>
+    </div>
   </body>
 </html>

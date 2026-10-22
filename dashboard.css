@@ -1,3 +1,5 @@
+/* Основные цвета */
+
 :root {
   color-scheme: dark;
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
@@ -19,7 +21,8 @@ body {
   border-radius: 22px;
 }
 
-.muted {
+.muted,
+.task-meta {
   color: #a2b6ab;
 }
 
@@ -35,6 +38,8 @@ body {
   color: #e7cd91;
 }
 
+/* Основная кнопка */
+
 .mint-btn {
   background: #b8f3cd;
   color: #10271b;
@@ -46,7 +51,7 @@ body {
   background: #98e6b4;
 }
 
-/* Sidebar */
+/* Боковое меню */
 
 .sidebar {
   background: #091a14;
@@ -102,7 +107,7 @@ body {
   font-weight: 600;
 }
 
-/* Icons */
+/* Иконки */
 
 .icon {
   display: inline-flex;
@@ -155,7 +160,7 @@ body {
   color: #cadca5;
 }
 
-/* Decorative header element */
+/* Декоративная плашка */
 
 .home-note {
   align-items: center;
@@ -174,7 +179,7 @@ body {
   transform: rotate(-12deg);
 }
 
-/* Hero */
+/* Главный баннер */
 
 .hero-art {
   border: 1px solid #2c4938;
@@ -192,6 +197,18 @@ body {
 .hero-copy {
   color: #b9cdbd;
 }
+
+.hero-caption {
+  position: absolute;
+  right: 20px;
+  bottom: 24px;
+  color: #9fb89b;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: right;
+}
+
+/* Рисунок в баннере */
 
 .hero-orbit {
   position: absolute;
@@ -290,17 +307,7 @@ body {
   border-radius: 0 18px 18px 0;
 }
 
-.hero-caption {
-  position: absolute;
-  right: 20px;
-  bottom: 24px;
-  color: #9fb89b;
-  font-size: 12px;
-  line-height: 20px;
-  text-align: right;
-}
-
-/* Summary cards */
+/* Карточки статистики */
 
 .stat-card {
   transition:
@@ -318,7 +325,7 @@ body {
   font-size: 11px;
 }
 
-/* Tasks */
+/* Фильтры задач */
 
 .filter-btn {
   border: 1px solid transparent;
@@ -333,6 +340,8 @@ body {
   background: #254532;
   color: #c5f5d6;
 }
+
+/* Список задач */
 
 .task-row {
   display: flex;
@@ -366,7 +375,6 @@ body {
 
 .task-meta {
   margin-top: 4px;
-  color: #a2b6ab;
   font-size: 11px;
 }
 
@@ -405,75 +413,151 @@ body {
   border-color: #607c6b;
 }
 
-/* Pantry */
+/* Блок Freshness first */
 
-.pantry-row {
+#pantry {
+  box-shadow: none;
+  overflow: hidden;
+}
+
+#pantry > .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 28px;
+}
+
+#pantry .shopping-header-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 12px;
-  padding: 12px;
 }
 
-.pantry-highlight {
-  border-radius: 12px;
-  background: #192b1e;
-}
-
-.food-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  font-size: 20px;
-}
-
-.food-banana {
-  background: #3b3a23;
-}
-
-.food-milk {
-  background: #20392b;
-}
-
-.food-bread {
-  background: #373122;
-}
-
-.food-avocado {
-  background: #293b28;
-}
-
-.freshness {
-  border: none;
+#pantry .shopping-header-row a {
+  color: #b8f3cd;
   font-size: 12px;
   white-space: nowrap;
 }
 
-.soon {
-  background: #4a3525;
-  color: #edbd91;
+#pantry .shopping-header-row a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
-.medium {
-  background: #3d3821;
-  color: #e5ce92;
+/* Продукты на главной */
+
+#dringendeProdukteContainer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
 }
 
-.fresh {
-  background: #213d2c;
-  color: #b8dfba;
+#dringendeProdukteContainer > .card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
+  background: #14281e;
+  border: 1px solid #263e30;
+  border-radius: 14px;
+  box-shadow: none;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
 }
 
-.pantry-tip {
-  border: 1px solid #34422c;
-  background: #1c2c1e;
-  color: #d3dda9;
+#dringendeProdukteContainer > .card:hover {
+  background: #193024;
+  border-color: #3b5945;
 }
 
-/* Dialogs */
+#dringendeProdukteContainer figure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  margin: 0;
+  padding: 6px;
+  overflow: hidden;
+  background: #20382a;
+  border-radius: 12px;
+  font-size: 23px;
+}
+
+#dringendeProdukteContainer img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+#dringendeProdukteContainer .card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  padding: 0;
+  background: transparent;
+}
+
+#dringendeProdukteContainer .card-title {
+  display: block;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  color: #edf5f1;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#dringendeProdukteContainer .produkt-menge {
+  margin: 0;
+  color: #a2b6ab;
+  font-size: 12px;
+}
+
+/* Срок годности */
+
+#dringendeProdukteContainer .restlaufzeit-badge {
+  flex-shrink: 0;
+  width: fit-content;
+  min-height: 24px;
+  height: auto;
+  margin-left: auto;
+  padding: 4px 9px;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+#dringendeProdukteContainer .restlaufzeit-badge.warning {
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.1);
+  border-color: rgba(250, 204, 21, 0.3);
+}
+
+#dringendeProdukteContainer .restlaufzeit-badge.danger {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+/* Диалоговые окна */
 
 .dialog-panel {
   border: 1px solid #34513e;
@@ -492,7 +576,7 @@ body {
   cursor: pointer;
 }
 
-/* Accessibility */
+/* Выделение при навигации клавиатурой */
 
 button:focus-visible,
 a:focus-visible {
@@ -500,12 +584,18 @@ a:focus-visible {
   outline-offset: 4px;
 }
 
-/* Responsive */
+/* Адаптация под экран */
 
 @media (min-width: 1024px) {
   .sidebar {
     border-right: 1px solid #20372e;
     border-bottom: none;
+  }
+}
+
+@media (max-width: 640px) {
+  #pantry > .card-body {
+    padding: 24px;
   }
 }
 
@@ -519,16 +609,5 @@ a:focus-visible {
   .hero-caption {
     right: 12px;
     font-size: 10px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  .stat-card,
-  .nav-item {
-    transition: none;
   }
 }
