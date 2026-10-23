@@ -1,4 +1,3 @@
-// ---------
 function updateSidebarTaskCount() {
   const navCount = document.getElementById("nav-count");
   if (!navCount) return;
@@ -7,7 +6,7 @@ function updateSidebarTaskCount() {
     const savedTasks = localStorage.getItem("homeflow_tasks");
     if (savedTasks) {
       const tasks = JSON.parse(savedTasks);
-      // (Offen)
+
       const activeTasksCount = tasks.filter((t) => !t.completed).length;
       navCount.textContent = activeTasksCount;
     } else {

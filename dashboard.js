@@ -151,7 +151,6 @@ function initializeTasks() {
     checkbox.addEventListener("change", () => {
       const task = tasks[index];
 
-      // جلب تاريخ اليوم بصيغة YYYY-MM-DD
       const now = new Date();
       const todayStr = now.toISOString().split("T")[0];
       const taskDateStr = task.time ? task.time.split("T")[0] : todayStr;
@@ -392,8 +391,6 @@ window.addEventListener("storage", (event) => {
   }
 });
 
-/*STATISTIK SHOPPING*/
-
 function updateShoppingCount() {
   const items = JSON.parse(localStorage.getItem("shopping_basket")) || [];
 
@@ -417,8 +414,6 @@ window.addEventListener("storage", (event) => {
     updateShoppingCount();
   }
 });
-
-/*PANTRY*/
 
 function updatePantryCount() {
   const produkte = JSON.parse(localStorage.getItem("produkte")) || [];

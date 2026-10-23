@@ -76,7 +76,7 @@ body {
   transform: translateY(0);
 }
 
-/* Общий сайдбар */
+
 .sidebar {
   padding: 24px;
   background: #091a14;
@@ -157,7 +157,7 @@ body {
   outline-offset: 4px;
 }
 
-/* Shopping — основная карточка */
+
 .shopping-card {
   width: 100%;
   min-width: 0;
@@ -193,7 +193,7 @@ body {
   color: var(--home-muted);
 }
 
-/* Shopping — картинка */
+
 .shopping-card header img {
   display: block;
   object-fit: cover;
@@ -222,7 +222,7 @@ body {
   transform: scale(1.025);
 }
 
-/* Shopping — форма */
+
 #add-form {
   padding: 18px;
   background: var(--home-card);
@@ -261,7 +261,7 @@ body {
   width: 100%;
 }
 
-/* Shopping — фильтры */
+
 .shopping-card .filter-btn {
   padding: 10px 16px;
   color: var(--home-muted);
@@ -291,7 +291,7 @@ body {
   box-shadow: 0 4px 18px rgba(114, 224, 173, 0.12);
 }
 
-/* Shopping — список */
+
 #shopping-items {
   gap: 10px;
   padding: 0;
@@ -386,7 +386,7 @@ body {
   font-weight: 650;
 }
 
-/* Shopping — прогресс */
+
 .shopping-card footer {
   border-color: var(--home-border);
 }
@@ -423,7 +423,7 @@ body {
   color: var(--home-text);
 }
 
-/* Shopping — редактирование */
+
 .shopping-card .edit-btn {
   color: #39ff14;
   background: transparent;
@@ -461,7 +461,7 @@ body {
   color: #ff6b6b;
 }
 
-/* Pantry — основная карточка */
+
 .pantry-card {
   width: 100%;
   min-width: 0;
@@ -509,7 +509,7 @@ body {
   margin-left: auto;
 }
 
-/* Pantry — фильтры */
+
 .pantry-filters {
   display: flex;
   align-items: center;
@@ -538,7 +538,7 @@ body {
   border-color: rgba(114, 224, 173, 0.4);
 }
 
-/* Pantry — продукты */
+
 #produkteContainer {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -629,7 +629,7 @@ body {
   border-color: #72e0ad;
 }
 
-/* Pantry — Menge слева, кнопки справа */
+
 .produkt-actions {
   display: flex;
   align-items: center;
@@ -667,7 +667,7 @@ body {
   color: #f87171;
 }
 
-/* Pantry — легенда */
+
 .pantry-legend {
   display: flex;
   align-items: center;
@@ -734,7 +734,7 @@ body {
   font-size: 13px;
 }
 
-/* Pantry — форма */
+
 #produktForm {
   display: flex;
   flex-direction: column;
@@ -784,7 +784,7 @@ body {
   margin-top: 4px;
 }
 
-/* Pantry — календарь */
+
 #cally1 {
   display: block;
   width: 100%;
@@ -818,7 +818,7 @@ body {
   background: #fff;
 }
 
-/* Клавиатура и анимация */
+
 .shopping-card button:focus-visible,
 .shopping-card input:focus-visible,
 .shopping-card select:focus-visible,
@@ -839,7 +839,7 @@ body {
   }
 }
 
-/* Большие экраны */
+
 @media (min-width: 640px) {
   #produkteContainer {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -863,7 +863,7 @@ body {
   }
 }
 
-/* Телефоны */
+
 @media (max-width: 640px) {
   .shopping-card {
     border-radius: 22px;

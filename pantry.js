@@ -89,7 +89,7 @@ const produkte = JSON.parse(localStorage.getItem("produkte")) || [
   },
 ];
 
-// Элементы страницы.
+
 const container = document.querySelector("#produkteContainer");
 const open_add = document.querySelector("#open-add");
 const produkt_form = document.querySelector("#produktForm");
@@ -106,12 +106,12 @@ const filterButtons = document.querySelectorAll(".pantry-filter");
 
 let aktiveKategorie = "Alle";
 
-// Сохранение продуктов.
+
 function speichereProdukte() {
   localStorage.setItem("produkte", JSON.stringify(produkte));
 }
 
-// Расчёт оставшихся дней.
+
 function berechneRestlaufzeit(datum) {
   if (!datum) return null;
 
@@ -132,7 +132,7 @@ function resttage(produkt) {
   return produkt.restlaufzeit;
 }
 
-// Отображение продуктов выбранной категории.
+
 function zeigeProdukte() {
   const liste =
     aktiveKategorie === "Alle"
@@ -221,7 +221,7 @@ function zeigeProdukte() {
 
     container.appendChild(karte);
 
-    // Изменение количества.
+    
     editButton.addEventListener("click", () => {
       editButton.disabled = true;
 
@@ -276,7 +276,7 @@ function zeigeProdukte() {
       });
     });
 
-    // Удаление продукта.
+    
     deleteButton.addEventListener("click", () => {
       const index = produkte.indexOf(produkt);
 
@@ -290,12 +290,12 @@ function zeigeProdukte() {
   });
 }
 
-// Открытие и закрытие формы.
+
 open_add.addEventListener("click", () => {
   produkt_form.classList.toggle("hidden");
 });
 
-// Выбор даты.
+
 if (kalender && kalenderButton && datumInput) {
   kalender.addEventListener("change", () => {
     if (!kalender.value) return;
@@ -305,7 +305,7 @@ if (kalender && kalenderButton && datumInput) {
   });
 }
 
-// Подсказки количества и изображения.
+
 function produktDetails(name) {
   if (name.includes("walnüsse") || name.includes("walnuss")) {
     return ["500 g", "images/walnüsse.jpg"];
@@ -360,7 +360,7 @@ produktNameInput.addEventListener("input", () => {
   produktMengeInput.value = produktDetails(name)[0];
 });
 
-// Добавление продукта.
+
 function produktHinzufuegen() {
   const name = produktNameInput.value.trim();
   const menge = produktMengeInput.value.trim();
@@ -415,7 +415,7 @@ produkt_form.addEventListener("submit", (event) => {
   produktHinzufuegen();
 });
 
-// Фильтры Pantry.
+
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
     filterButtons.forEach((btn) => {
@@ -428,6 +428,6 @@ filterButtons.forEach((button) => {
   });
 });
 
-// Первое отображение.
+
 speichereProdukte();
 zeigeProdukte();

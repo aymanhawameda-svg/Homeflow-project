@@ -57,14 +57,12 @@ let shopping_basket = JSON.parse(localStorage.getItem("shopping_basket")) || [
   },
 ];
 
-// Названия категорий для отображения.
 const category_names = {
   groceries: "Lebensmittel",
   household: "Putzmittel",
   "personal-care": "Drogerieartikel",
 };
 
-// Поддержка товаров, сохранённых ранее с немецкими категориями.
 function category_value(category) {
   if (category === "Lebensmittel") return "groceries";
   if (category === "Putzmittel") return "household";
@@ -87,14 +85,12 @@ const filter_buttons = document.querySelectorAll(".shopping-card .filter-btn");
 
 let active_filter = "all";
 
-// Сохранение товаров.
 function save_to_localStorage() {
   localStorage.setItem("shopping_basket", JSON.stringify(shopping_basket));
 }
 
 save_to_localStorage();
 
-// Отображение выбранной категории.
 function show_shopping() {
   const items =
     active_filter === "all"
@@ -104,7 +100,6 @@ function show_shopping() {
   shopping_card(items);
 }
 
-// Создание строк товаров.
 function shopping_card(items) {
   shopping_items.innerHTML = "";
 
@@ -117,7 +112,6 @@ function shopping_card(items) {
     card_item.classList.add("shopping-item");
     card_item.classList.toggle("is-bought", item.bought);
 
-    // Чекбокс.
     const input_card = document.createElement("input");
     input_card.type = "checkbox";
     input_card.classList.add("product-check");
@@ -125,29 +119,24 @@ function shopping_card(items) {
 
     input_card.setAttribute("aria-label", `${item.name} als gekauft markieren`);
 
-    // Название товара.
     const title = document.createElement("h2");
     title.classList.add("product-name");
     title.textContent = item.name;
 
-    // Количество.
     const quantity = document.createElement("p");
     quantity.classList.add("product-quantity");
     quantity.textContent = item.quantity;
 
-    // Категория на немецком.
     const category = document.createElement("p");
     category.classList.add("product-category");
     category.textContent = category_names[item.category] || item.category;
 
-    // Удаление.
     const btn_delete = document.createElement("button");
     btn_delete.type = "button";
     btn_delete.textContent = "🗑️";
     btn_delete.classList.add("delete-btn");
     btn_delete.setAttribute("aria-label", "Löschen");
 
-    // Редактирование.
     const btn_edit = document.createElement("button");
     btn_edit.type = "button";
     btn_edit.textContent = "🖊️";
@@ -162,7 +151,6 @@ function shopping_card(items) {
     card_item.append(input_card, product_info);
     shopping_items.append(card_item);
 
-    // Отмечаем купленный товар.
     input_card.addEventListener("change", () => {
       item.bought = input_card.checked;
 
@@ -172,7 +160,6 @@ function shopping_card(items) {
       show_shopping();
     });
 
-    // Удаляем товар.
     btn_delete.addEventListener("click", () => {
       shopping_basket = shopping_basket.filter(
         (product) => product.id !== item.id,
@@ -182,7 +169,6 @@ function shopping_card(items) {
       show_shopping();
     });
 
-    // Изменяем количество.
     btn_edit.addEventListener("click", () => {
       btn_edit.disabled = true;
 
@@ -236,7 +222,6 @@ function shopping_card(items) {
   update_progress();
 }
 
-// Прогресс покупок.
 function update_progress() {
   const total_items = shopping_basket.length;
 
@@ -260,7 +245,6 @@ function update_progress() {
     `${total_items - bought_items} Artikel noch zu kaufen`;
 }
 
-// Переключение категорий.
 filter_buttons.forEach((button) => {
   button.addEventListener("click", () => {
     active_filter = category_value(button.dataset.filter);
@@ -276,12 +260,10 @@ filter_buttons.forEach((button) => {
   });
 });
 
-// Открытие формы.
 document.querySelector("#open-add").addEventListener("click", () => {
   add_form.classList.toggle("hidden");
 });
 
-// Подсказки названия и количества.
 function product_details(name) {
   if (name.includes("kartoffel")) {
     return ["🥔", "Kartoffeln", "1 kg"];
@@ -322,7 +304,6 @@ item_name.addEventListener("input", () => {
   item_quantity.value = product_details(item_name.value.toLowerCase())[2];
 });
 
-// Добавление товара.
 add_form.addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -347,5 +328,4 @@ add_form.addEventListener("submit", (event) => {
   add_form.classList.add("hidden");
 });
 
-// Первое отображение списка.
 show_shopping();

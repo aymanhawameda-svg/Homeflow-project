@@ -107,8 +107,6 @@ body {
   font-weight: 600;
 }
 
-/* Иконки */
-
 .icon {
   display: inline-flex;
   align-items: center;
@@ -160,8 +158,6 @@ body {
   color: #cadca5;
 }
 
-/* Декоративная плашка */
-
 .home-note {
   align-items: center;
   gap: 10px;
@@ -178,8 +174,6 @@ body {
   color: #a8ce91;
   transform: rotate(-12deg);
 }
-
-/* Главный баннер */
 
 .hero-art {
   border: 1px solid #2c4938;
@@ -207,8 +201,6 @@ body {
   line-height: 20px;
   text-align: right;
 }
-
-/* Рисунок в баннере */
 
 .hero-orbit {
   position: absolute;
@@ -307,8 +299,6 @@ body {
   border-radius: 0 18px 18px 0;
 }
 
-/* Карточки статистики */
-
 .stat-card {
   transition:
     transform 0.2s,
@@ -325,8 +315,6 @@ body {
   font-size: 11px;
 }
 
-/* Фильтры задач */
-
 .filter-btn {
   border: 1px solid transparent;
   border-radius: 8px;
@@ -340,8 +328,6 @@ body {
   background: #254532;
   color: #c5f5d6;
 }
-
-/* Список задач */
 
 .task-row {
   display: flex;
@@ -413,8 +399,6 @@ body {
   border-color: #607c6b;
 }
 
-/* Блок Freshness first */
-
 #pantry {
   box-shadow: none;
   overflow: hidden;
@@ -445,8 +429,6 @@ body {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-
-/* Продукты на главной */
 
 #dringendeProdukteContainer {
   display: grid;
@@ -528,8 +510,6 @@ body {
   font-size: 12px;
 }
 
-/* Срок годности */
-
 #dringendeProdukteContainer .restlaufzeit-badge {
   flex-shrink: 0;
   width: fit-content;
@@ -557,8 +537,6 @@ body {
   border-color: rgba(248, 113, 113, 0.3);
 }
 
-/* Диалоговые окна */
-
 .dialog-panel {
   border: 1px solid #34513e;
   background: #0d201a;
@@ -576,15 +554,11 @@ body {
   cursor: pointer;
 }
 
-/* Выделение при навигации клавиатурой */
-
 button:focus-visible,
 a:focus-visible {
   outline: 2px solid #b8f3cd;
   outline-offset: 4px;
 }
-
-/* Адаптация под экран */
 
 @media (min-width: 1024px) {
   .sidebar {
