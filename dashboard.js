@@ -370,3 +370,52 @@ window.addEventListener("storage", (event) => {
     zeigeDringendeProdukte();
   }
 });
+
+/*STATISTIK SHOPPING*/
+
+function updateShoppingCount() {
+  const items = JSON.parse(localStorage.getItem("shopping_basket")) || [];
+
+  const lebensmittel = items.filter((item) => {
+    return (
+      (item.category === "groceries" || item.category === "Lebensmittel") &&
+      !item.bought
+    );
+  });
+
+  document.querySelector("#shopping-count").textContent = lebensmittel.length;
+}
+
+updateShoppingCount();
+
+window.addEventListener("pageshow", updateShoppingCount);
+window.addEventListener("focus", updateShoppingCount);
+
+window.addEventListener("storage", (event) => {
+  if (event.key === "shopping_basket" || event.key === null) {
+    updateShoppingCount();
+  }
+});
+
+/*PANTRY*/
+
+function updatePantryCount() {
+  const produkte = JSON.parse(localStorage.getItem("produkte")) || [];
+
+  const dringend = produkte.filter((produkt) => {
+    return restlicheTage(produkt) <= 2;
+  });
+
+  document.querySelector("#pantry-count").textContent = dringend.length;
+}
+
+updatePantryCount();
+
+window.addEventListener("pageshow", updatePantryCount);
+window.addEventListener("focus", updatePantryCount);
+
+window.addEventListener("storage", (event) => {
+  if (event.key === "produkte" || event.key === null) {
+    updatePantryCount();
+  }
+});

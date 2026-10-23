@@ -227,23 +227,30 @@
               </div>
             </a>
 
-            <a
-              href="#shopping-modal"
-              class="panel stat-card p-5"
-              data-open-dialog="shopping-modal"
-            >
-              <span class="icon stat-icon purple">
-                <svg><use href="#cart" /></svg>
-              </span>
+            <!-- SHOPPING STATISTIK --->
 
-              <p class="muted mt-4 text-xs">Shopping list</p>
 
-              <div class="mt-1 flex items-end justify-between gap-2">
-                <span class="text-3xl font-semibold tracking-tight"> 8 </span>
+            <a href="./newstyle.html" class="panel stat-card p-5">
+  <span class="icon stat-icon purple">
+    <svg><use href="#cart" /></svg>
+  </span>
 
-                <span class="stat-caption text-purple"> 3 essentials </span>
-              </div>
-            </a>
+  <p class="muted mt-4 text-xs">Einkaufsliste</p>
+
+  <div class="mt-1 flex items-end justify-between gap-2">
+    <span
+      id="shopping-count"
+      class="text-3xl font-semibold tracking-tight"
+    >
+      0
+    </span>
+
+    <span class="stat-caption text-purple">Lebensmittel</span>
+  </div>
+</a>
+
+   <!-- ENDE --->
+  
 
             <div id="budget" class="panel p-5">
               <span class="icon stat-icon gold">
@@ -261,19 +268,34 @@
               </div>
             </div>
 
-            <a href="#pantry" class="panel stat-card p-5">
-              <span class="icon stat-icon olive">
-                <svg><use href="#leaf" /></svg>
-              </span>
 
-              <p class="muted mt-4 text-xs">In your pantry</p>
+            <!---PANTRY STATISTIK-->
 
-              <div class="mt-1 flex items-end justify-between gap-2">
-                <span class="text-3xl font-semibold tracking-tight"> 12 </span>
+            <a href="./pantry.html" class="panel stat-card p-5">
+  <span class="icon stat-icon olive">
+    <svg><use href="#leaf" /></svg>
+  </span>
 
-                <span class="stat-caption text-gold"> 3 to use soon </span>
-              </div>
-            </a>
+  <p class="muted mt-4 text-xs">Vorräte</p>
+
+  <div class="mt-1 flex items-end justify-between gap-2">
+    <span
+      id="pantry-count"
+      class="text-3xl font-semibold tracking-tight"
+    >
+      0
+    </span>
+
+    <span class="stat-caption text-gold">
+      Dringend verbrauchen
+    </span>
+
+  </div>
+
+
+</a>
+
+<!---ENDE PANTY STATISTIK-->
           </div>
         </section>
 
